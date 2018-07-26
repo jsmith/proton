@@ -32,6 +32,18 @@ function createWindow () {
   })
 }
 
+require('electron-context-menu')({
+  labels: {
+    cut: 'Configured Cut',
+    copy: 'Configured Copy',
+    paste: 'Configured Paste',
+    save: 'Configured Save Image',
+    copyLink: 'Configured Copy Link',
+    copyImageAddress: 'Configured Copy Image Address',
+    inspect: 'Configured Inspect'
+  }
+})
+
 app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {

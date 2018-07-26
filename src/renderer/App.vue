@@ -56,10 +56,8 @@
         v-model="rightDrawer"
         app
       >
-        <v-list>
-          <v-list-tile>
-            <file-explorer :tree="tree"></file-explorer>
-          </v-list-tile>
+        <v-list dense>
+          <file-explorer :tree="tree"></file-explorer>
           <!--<v-list-tile @click.native="right = !right">-->
             <!--<v-list-tile-action>-->
               <!--<v-icon light>compare_arrows</v-icon>-->
