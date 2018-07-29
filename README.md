@@ -2,7 +2,7 @@
 
 > A DAW built with Electron and Vue!
 
-#### Build Setup
+## Development
 
 ``` bash
 # Ensure you have npm installed.
@@ -25,3 +25,10 @@ npm test
 npm run lint
 
 ```
+
+## Roadmap
+- [ ] Note editor
+- [ ] Introduce playlist
+- [ ] Drag & drop sounds into playlist
+- [ ] Playlist playback
+- [ ] VST Support

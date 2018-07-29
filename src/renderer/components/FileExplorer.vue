@@ -25,7 +25,7 @@
         return { transform: `translate(${this.depth * 10}px)` }
       },
       self () {
-        // Doing this removes confusion
+        // PyCharm gets a bit confused if you don't do this
         return this.tree
       },
       isLeaf () {
@@ -34,7 +34,3 @@
     }
   }
 </script>
-
-<style scoped>
-
-</style>

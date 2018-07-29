@@ -1,14 +1,18 @@
 import Vue from 'vue'
 import axios from 'axios'
 import Vuetify from 'vuetify'
+import * as VueWindow from '@hscmap/vue-window'
 import 'vuetify/dist/vuetify.css'
 
 import App from './App'
 import router from './router'
 import store from './store'
 
+Vue.use(VueWindow)
 Vue.use(Vuetify)
+
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
+// noinspection JSUnusedGlobalSymbols
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
