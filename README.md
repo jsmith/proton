@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Proton
 
 > A DAW built with Electron and Vue!
@@ -32,3 +33,7 @@ npm run lint
 - [ ] Drag & drop sounds into playlist
 - [ ] Playlist playback
 - [ ] VST Support
+=======
+# proton
+A modern DAW built with Vue!
+>>>>>>> origin/master
