@@ -1,7 +1,6 @@
-<<<<<<< HEAD
 # Proton
 
-> A DAW built with Electron and Vue!
+> A modern DAW built with Electron and Vue!
 
 ## Development
 
@@ -28,12 +27,15 @@ npm run lint
 ```
 
 ## Roadmap
-- [ ] Note editor
-- [ ] Introduce playlist
-- [ ] Drag & drop sounds into playlist
-- [ ] Playlist playback
+- [ ] Piano Roll (with paste tool, slice tool)
+- [ ] Add tabbed playlists
+- [ ] Drag & drop audio files (mp3, wav, ogg) into playlist
 - [ ] VST Support
-=======
-# proton
-A modern DAW built with Vue!
->>>>>>> origin/master
+- [ ] Create basic synthesizers
+- [ ] Add mixer for effects. Effects will be visible on each channel.
+
+## Inspiration
+- [FL Studio](https://www.image-line.com/flstudio/)
+- [This Abelton Reword](http://cdm.link/app/uploads/2017/06/Live-view-less-dense@full.png)
+- [Atom](https://atom.io/)
+
