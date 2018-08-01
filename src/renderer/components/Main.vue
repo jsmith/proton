@@ -1,10 +1,13 @@
 <template>
-  
+  <note-sequencer></note-sequencer>
 </template>
 
 <script>
+  import NoteSequencer from '@/components/NoteSequencer'
+
   export default {
-    name: 'Main'
+    name: 'Main',
+    components: {NoteSequencer}
   }
 </script>
 

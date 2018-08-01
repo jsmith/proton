@@ -4,7 +4,10 @@
       <v-icon>select</v-icon>
       <v-icon>slice</v-icon>
     </template>
-    <piano-roll :octaves="octaves" :divs-per-measure="4" :num-measures="4"></piano-roll>
+    <h1>
+      Hello
+    </h1>
+    <!--<piano-roll :octaves="octaves" :divs-per-measure="4" :num-measures="4"></piano-roll>-->
   </window>
 </template>
 

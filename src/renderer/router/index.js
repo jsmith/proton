@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Main from '@/components/Main'
+import WelcomeView from '@/components/WelcomeView'
+import InspireView from '@/components/InspireView'
 
 Vue.use(Router)
 
@@ -8,17 +11,17 @@ export default new Router({
     {
       path: '/',
       name: 'main',
-      component: require('@/components/Main').default
+      component: Main
     },
     {
       path: '/welcome',
       name: 'welcome-view',
-      component: require('@/components/WelcomeView').default
+      component: WelcomeView
     },
     {
       path: '/inspire',
       name: 'inspire',
-      component: require('@/components/InspireView').default
+      component: InspireView
     },
     {
       path: '*',
