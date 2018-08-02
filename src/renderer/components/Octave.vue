@@ -5,60 +5,58 @@
 </template>
 
 <script>
-    export default {
-      name: 'Keys',
-      props: {octave: {default: 4, type: Number}},
-      data () {
-        return {
-          pressed: new Set(),
-          lookup: {
-            'C4': 1,
-            'C#4': 1.5
-          }
-        }
+  import Tone from 'tone'
+
+  let synth = new Tone.Synth().toMaster()
+
+  export default {
+    name: 'Keys',
+    props: {
+      octave: {default: 4, type: Number}
+    },
+    data () {
+      return {
+        pressed: new Set()
+      }
+    },
+    methods: {
+      down (note) {
+        synth.triggerAttackRelease(note.key, '8n')
+        this.pressed.add(note.key)
       },
-      methods: {
-        down (note) {
-          const number = this.lookup[note.key]
-          const audio = this.audio[number]
-          audio.volume = 1
-          audio.currentTime = 0
-          audio.play()
-          this.pressed.add(note.key)
-        },
-        up (note) {
-          this.pressed.remove(note.key)
-        },
-        classes (note) {
-          if (note.key in this.pressed) {
-            return ['playing', note.color]
-          } else {
-            return note.color
-          }
-        }
+      up (note) {
+        this.pressed.delete(note.key)
       },
-      computed: {
-        keys () {
-          return [
-            ['white', 'C'],
-            ['black', 'C#'],
-            ['white', 'D'],
-            ['black', 'D#'],
-            ['white', 'E'],
-            ['white', 'F'],
-            ['black', 'F#'],
-            ['white', 'G'],
-            ['black', 'G#'],
-            ['white', 'A'],
-            ['black', 'A#'],
-            ['white', 'B']
-          ].map(([color, key]) => ({
-            color: color,
-            key: `${key}${this.octave}`
-          }))
+      classes (note) {
+        if (note.key in this.pressed) {
+          return ['playing', note.color]
+        } else {
+          return note.color
         }
       }
+    },
+    computed: {
+      keys () {
+        return [
+          ['white', 'C'],
+          ['black', 'C#'],
+          ['white', 'D'],
+          ['black', 'D#'],
+          ['white', 'E'],
+          ['white', 'F'],
+          ['black', 'F#'],
+          ['white', 'G'],
+          ['black', 'G#'],
+          ['white', 'A'],
+          ['black', 'A#'],
+          ['white', 'B']
+        ].map(([color, key]) => ({
+          color: color,
+          key: `${key}${this.octave}`
+        }))
+      }
     }
+  }
 </script>
 
 <style scoped lang="sass">
@@ -68,7 +66,7 @@
     $color_white: #eee
     $color_black: #585858
 
-    @mixin size($w, $h)
+    @mixin size($h, $w)
         width: $w
         height: $h
     
@@ -86,13 +84,9 @@
             background-color: $color_white
 
     .black
+        +size($key_width / 2, $key_height * 0.55)
         position: absolute
-        top: 0
-        width: $key_width / 2
-        height: $key_height * 0.55
         background-color: $color_black
-        margin-left: -$key_width / 4
-        margin-right: -$key_width / 4
         z-index: 20
         transform: translate(-3px, -3px)
         transition: 0.1s

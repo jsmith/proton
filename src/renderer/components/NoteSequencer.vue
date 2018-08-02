@@ -7,7 +7,7 @@
     <h1>
       Hello
     </h1>
-    <!--<piano-roll :octaves="octaves" :divs-per-measure="4" :num-measures="4"></piano-roll>-->
+    <piano-roll :octaves="octaves" :divs-per-measure="4" :num-measures="4"></piano-roll>
   </window>
 </template>
 
@@ -20,7 +20,8 @@
     components: {PianoRoll, Window},
     data () {
       return {
-        octaves: [...Array(8).keys()]
+        // octaves: [...Array(1).keys()],
+        octaves: [4]
       }
     }
   }
