@@ -28,10 +28,10 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
-    "draggable-vue-directive": "^2.0.1",
     "electron-context-menu": "^0.10.0",
     "tone": "^0.12.80",
     "vue": "^2.4.2",
+    "vue-draggable-resizable": "^1.7.1",
     "vue-electron": "^1.0.6",
     "vue-router": "^2.5.3",
     "vuetify": "1.0.0",

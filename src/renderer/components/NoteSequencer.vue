@@ -1,27 +1,31 @@
 <template>
-  <window>
+  <window v-model="size">
     <template slot="toolbar">
       <v-icon>select</v-icon>
       <v-icon>slice</v-icon>
     </template>
-    <h1>
-      Hello
-    </h1>
-    <piano-roll :octaves="octaves" :divs-per-measure="4" :num-measures="4"></piano-roll>
+    <v-layout wrap>
+      <!--Remove v-layout and v-flex to just CSS-->
+      <v-flex v-for="octave in octaves" xs12 style="display: flex;">
+        <octave :octave="octave"></octave>
+      </v-flex>
+    </v-layout>
   </window>
 </template>
 
 <script>
-  import PianoRoll from '@/components/PianoRoll'
   import Window from '@/components/Window'
+  import Octave from '@/components/Octave'
 
   export default {
     name: 'NoteSequencer',
-    components: {PianoRoll, Window},
+    components: {Window, Octave},
     data () {
       return {
-        // octaves: [...Array(1).keys()],
-        octaves: [4]
+        octaves: [4, 5].reverse(),
+        divsPerMeasure: 4,
+        numMeasures: 4,
+        size: {height: 500, width: 500}
       }
     }
   }
