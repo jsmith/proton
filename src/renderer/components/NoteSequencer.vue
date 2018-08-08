@@ -4,12 +4,7 @@
       <v-icon>select</v-icon>
       <v-icon>slice</v-icon>
     </template>
-    <v-layout wrap>
-      <!--Remove v-layout and v-flex to just CSS-->
-      <v-flex v-for="octave in octaves" xs12 style="display: flex;">
-        <octave :octave="octave"></octave>
-      </v-flex>
-    </v-layout>
+    <octave v-for="octave in octaves" :octave="octave"></octave>
   </window>
 </template>
 

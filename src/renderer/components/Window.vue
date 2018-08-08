@@ -18,7 +18,7 @@
       </v-btn>
     </div>
 
-    <div class="content" :style="contentStyle">
+    <div :style="contentStyle">
       <slot/>
     </div>
   </vue-draggable-resizable>
@@ -71,9 +71,5 @@
     font-family: sans-serif;
     padding: .5em;
     flex: 0 0 auto;
-  }
-
-  .window {
-    overflow: hidden;
   }
 </style>

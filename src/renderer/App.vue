@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <v-app dark>
-      
+
       <v-navigation-drawer fixed clipped v-model="drawer" app>
         <v-list dense>
           <file-explorer :tree="tree"></file-explorer>
