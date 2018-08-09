@@ -21,6 +21,12 @@ export const px = {
   methods: {
     px (size) {
       return `${size}px`
+    },
+    hw (h, w) {
+      return {
+        height: this.px(h),
+        width: this.px(w)
+      }
     }
   }
 }

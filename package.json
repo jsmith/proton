@@ -24,7 +24,9 @@
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "test": "npm run unit && npm run e2e",
     "unit": "karma start test/unit/karma.conf.js",
-    "postinstall": "npm run lint:fix"
+    "postinstall": "npm run lint:fix",
+    "storybook": "start-storybook -p 9001 -c .storybook",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "axios": "^0.16.1",
@@ -38,6 +40,10 @@
     "vuex": "^2.3.1"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^3.4.10",
+    "@storybook/addon-links": "^3.4.10",
+    "@storybook/addons": "^3.4.10",
+    "@storybook/vue": "^3.4.10",
     "babel-core": "^6.25.0",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.1.1",
@@ -45,6 +51,7 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.0",
     "babel-preset-stage-0": "^6.24.1",
+    "babel-preset-vue": "^2.0.2",
     "babel-register": "^6.24.1",
     "babili-webpack-plugin": "^0.1.2",
     "cfonts": "^1.1.3",

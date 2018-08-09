@@ -4,17 +4,25 @@
       <v-icon>select</v-icon>
       <v-icon>slice</v-icon>
     </template>
-    <octave v-for="octave in octaves" :octave="octave"></octave>
+    <div style="display: flex">
+      <div>
+        <piano v-for="octave in octaves" :octave="octave"></piano>
+      </div>
+      <div>
+        <sequencer v-for="_ in octaves" :size="25"></sequencer>
+      </div>
+    </div>
   </window>
 </template>
 
 <script>
   import Window from '@/components/Window'
-  import Octave from '@/components/Octave'
+  import Piano from '@/components/Piano'
+  import Sequencer from '@/components/Sequencer'
 
   export default {
     name: 'NoteSequencer',
-    components: {Window, Octave},
+    components: {Window, Piano, Sequencer},
     data () {
       return {
         octaves: [4, 5].reverse(),
