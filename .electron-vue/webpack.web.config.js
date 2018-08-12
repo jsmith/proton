@@ -3,6 +3,7 @@
 process.env.BABEL_ENV = 'web'
 
 const path = require('path')
+const { PRODUCTION } = require('./utils')
 const webpack = require('webpack')
 
 const BabiliWebpackPlugin = require('babili-webpack-plugin')
@@ -115,7 +116,7 @@ let webConfig = {
 /**
  * Adjust webConfig for production settings
  */
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === PRODUCTION) {
   webConfig.devtool = ''
 
   webConfig.plugins.push(

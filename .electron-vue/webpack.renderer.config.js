@@ -11,6 +11,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
+const { urlRules, PRODUCTION } = require('./utils')
+
 /**
  * List of node_modules to include in webpack bundle
  *
@@ -26,7 +28,7 @@ let rendererConfig = {
     renderer: path.join(__dirname, '../src/renderer/main.js')
   },
   externals: [
-    ...Object.keys(dependencies || {}).filter(d => !whiteListedModules.includes(d))
+    ...Object.keys(dependencies).filter(d => !whiteListedModules.includes(d))
   ],
   module: {
     rules: [
@@ -66,7 +68,7 @@ let rendererConfig = {
         use: {
           loader: 'vue-loader',
           options: {
-            extractCSS: process.env.NODE_ENV === 'production',
+            extractCSS: process.env.NODE_ENV === PRODUCTION,
             loaders: {
               sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1',
               scss: 'vue-style-loader!css-loader!sass-loader'
@@ -75,46 +77,19 @@ let rendererConfig = {
         }
       },
       {
-        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-        use: {
-          loader: 'url-loader',
-          query: {
-            limit: 10000,
-            name: 'imgs/[name]--[folder].[ext]'
-          }
-        }
-      },
-      {
-        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: 'media/[name]--[folder].[ext]'
-        }
-      },
-      {
-        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        use: {
-          loader: 'url-loader',
-          query: {
-            limit: 10000,
-            name: 'fonts/[name]--[folder].[ext]'
-          }
-        }
-      },
-      {
         test: /\.scss$/,
-        use: [
-          "style-loader", // creates style nodes from JS strings
-          "css-loader", // translates CSS into CommonJS
-          "sass-loader" // compiles Sass to CSS
-        ]
-      }
+        use: ["style-loader", "css-loader", "sass-loader"]
+      },
+      ...urlRules([
+        {ext: 'png|jpe?g|gif|svg', folder: 'imgs'},
+        {ext: 'mp4|webm|ogg|mp3|wav|flac|aac', folder: 'media'},
+        {ext: 'woff2?|eot|ttf|otf', folder: 'fonts'}
+      ])
     ]
   },
   node: {
-    __dirname: process.env.NODE_ENV !== 'production',
-    __filename: process.env.NODE_ENV !== 'production'
+    __dirname: process.env.NODE_ENV !== PRODUCTION,
+    __filename: process.env.NODE_ENV !== PRODUCTION
   },
   plugins: [
     new ExtractTextPlugin('styles.css'),
@@ -126,7 +101,7 @@ let rendererConfig = {
         removeAttributeQuotes: true,
         removeComments: true
       },
-      nodeModules: process.env.NODE_ENV !== 'production'
+      nodeModules: process.env.NODE_ENV !== PRODUCTION
         ? path.resolve(__dirname, '../node_modules')
         : false
     }),
@@ -151,7 +126,7 @@ let rendererConfig = {
 /**
  * Adjust rendererConfig for development settings
  */
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== PRODUCTION) {
   rendererConfig.plugins.push(
     new webpack.DefinePlugin({
       '__static': `"${path.join(__dirname, '../static').replace(/\\/g, '\\\\')}"`
@@ -162,7 +137,7 @@ if (process.env.NODE_ENV !== 'production') {
 /**
  * Adjust rendererConfig for production settings
  */
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === PRODUCTION) {
   rendererConfig.devtool = ''
 
   rendererConfig.plugins.push(
@@ -174,12 +149,8 @@ if (process.env.NODE_ENV === 'production') {
         ignore: ['.*']
       }
     ]),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': '"production"'
-    }),
-    new webpack.LoaderOptionsPlugin({
-      minimize: true
-    })
+    new webpack.DefinePlugin({'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`}),
+    new webpack.LoaderOptionsPlugin({minimize: true})
   )
 }
 

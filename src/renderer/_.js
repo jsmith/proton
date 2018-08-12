@@ -8,3 +8,18 @@ export const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#'
     color: note.endsWith('#') ? BLACK : WHITE
   }
 })
+
+export const range = (a, b = 0, interval = 1) => {
+  let start
+  let end
+  if (a > b) {
+    start = 0; end = a
+  } else {
+    start = a; end = b
+  }
+  const range = []
+  for (let i = start; i <= end; i += interval) {
+    range.push(i)
+  }
+  return range
+}

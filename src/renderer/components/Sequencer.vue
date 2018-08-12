@@ -1,35 +1,64 @@
 <template>
-  <div class="sequencer">
-    <div v-for="note in notes" :key="note.value" class="note" :style="styles[note.color]">
-      <div v-for="measure in [0]" :key="measure" class="measure">
-        <div v-for="section in [0, 1, 2, 3]" :key="section" class="section">
-          <div v-for="div in [0, 1, 2, 3]" :key="div" class="div" :style="divStyle">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <table>
+    <tr v-for="note in notes" :key="note.value" :style="styles[note.color]" class="note">
+      <td v-for="i in range(16)" :key="i">
+        <div :style="divStyle" @click="handleClick" @dragenter="dragenter" @dragleave="dragleave" @drop="drop" @dragover="dragover"></div>
+      </td>
+    </tr>
+  </table>
 </template>
 
 <script>
   import { px } from '@/mixins'
-  import { notes, BLACK, WHITE } from '@/_'
+  import { notes, range, BLACK, WHITE } from '@/_'
 
   export default {
     name: 'Sequencer',
     mixins: [px],
-    data: () => ({notes, color: '#212121'}),
     props: {size: Number},
+    data () {
+      return {
+        notes,
+        color: '#212121',
+        lineColor: '#000'
+      }
+    },
     computed: {
       divStyle () {
-        return this.hw(this.size, this.size)
+        return {
+          borderRight: `solid 1px ${this.lineColor}`,
+          ...this.hw(this.size, this.size)
+        }
       },
       styles () {
         return {
           [BLACK]: {backgroundColor: this.color},
-          [WHITE]: {backgroundColor: `lighten(${this.color}, 2)`}
+          [WHITE]: {backgroundColor: this.lighten(this.color, 2)}
         }
       }
+    },
+    methods: {
+      range,
+      handleClick (e) {
+        console.log(e)
+        if (!e.target.style['background-color']) {
+          e.target.style['background-color'] = 'red'
+          e.target.draggable = true
+        } else {
+          e.target.style['background-color'] = null
+          e.target.draggable = false
+        }
+      },
+      dragenter (e) {
+        e.target.style['background-color'] = 'red'
+      },
+      dragleave (e) {
+        e.target.style['background-color'] = null
+      },
+      drop (e) {
+        e.target.style['background-color'] = 'red'
+      },
+      dragover: e => e.preventDefault()
     }
   }
 </script>
@@ -39,21 +68,12 @@
     background: #303030
     display: inline-block
 
-  $line_color: #000
-
-  .measure
-    border-right: solid 1px $line_color
-
-  .section
-    border-right: solid 1px $line_color
-
-  .div
-    border-right: solid 1px $line_color
-
   .note
-    border-bottom: solid 0.5px $line_color
+    border-bottom: solid 0.5px #000
 
   .measure, .section
     display: flex
 
+  table
+    border-collapse: collapse
 </style>
