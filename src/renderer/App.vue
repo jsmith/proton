@@ -8,10 +8,7 @@
         </v-list>
       </v-navigation-drawer>
 
-      <v-toolbar fixed app clipped-left>
-        <v-toolbar-side-icon @click.native.stop="drawer = !drawer"></v-toolbar-side-icon>
-        <v-toolbar-title v-text="title"></v-toolbar-title>
-      </v-toolbar>
+      <toolbar></toolbar>
 
       <v-content>
         <v-container fluid fill-height>
@@ -21,20 +18,7 @@
         </v-container>
       </v-content>
 
-      <v-navigation-drawer temporary right fixed v-model="rightDrawer" app>
-        <v-list>
-          <v-list-tile router :to="item.to" :key="i" v-for="(item, i) in items" exact>
-            <v-list-tile-action>
-              <v-icon v-html="item.icon"></v-icon>
-            </v-list-tile-action>
-            <v-list-tile-content>
-              <v-list-tile-title v-text="item.title"></v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
-        </v-list>
-      </v-navigation-drawer>
-
-      <v-footer :fixed="fixed" app>
+      <v-footer app>
         <v-spacer></v-spacer>
         <span>&copy; Jacob Smith 2018</span>
       </v-footer>
@@ -45,6 +29,7 @@
 
 <script>
   import FileExplorer from './components/FileExplorer'
+  import Toolbar from '@/components/Toolbar'
 
   let tree = {
     label: 'root',
@@ -73,20 +58,9 @@
 
   export default {
     name: 'Proton',
-    components: {FileExplorer},
+    components: {Toolbar, FileExplorer},
     data: () => ({
-      clipped: false,
       drawer: true,
-      fixed: false,
-      items: [
-        { icon: 'info', title: 'Main', to: '/' },
-        { icon: 'apps', title: 'Welcome', to: '/welcome' },
-        { icon: 'bubble_chart', title: 'Inspire', to: '/inspire' }
-      ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Proton',
       tree: tree
     })
   }
