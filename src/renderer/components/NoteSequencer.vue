@@ -6,10 +6,10 @@
     </template>
     <div style="display: flex">
       <div>
-        <piano v-for="octave in octaves" :octave="octave"></piano>
+        <piano v-for="octave in octaves" :key="octave" :octave="octave"></piano>
       </div>
       <div>
-        <sequencer v-for="_ in octaves" :size="25"></sequencer>
+        <sequencer v-for="octave in octaves" :key="octave" :size="25"></sequencer>
       </div>
     </div>
   </window>

@@ -1,21 +1,21 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, Menu, shell, dialog } from 'electron'
+import { DEVELOPMENT } from '../_'
+import assert from 'assert'
 
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
-if (process.env.NODE_ENV !== 'development') {
+if (process.env.NODE_ENV !== DEVELOPMENT) {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
 let mainWindow
-const winURL = process.env.NODE_ENV === 'development'
-  ? `http://localhost:9080`
-  : `file://${__dirname}/index.html`
+const winURL = process.env.NODE_ENV === DEVELOPMENT ? `http://localhost:9080` : `file://${__dirname}/index.html`
 
-function createWindow () {
+const createWindow = () => {
   /**
    * Initial window options
    */
@@ -30,6 +30,57 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+
+  setMainMenu()
+}
+
+const setMainMenu = () => {
+  const template = [
+    {
+      label: 'File',
+      submenu: [
+        {
+          label: 'Save',
+          accelerator: 'CmdOrCtrl+S',
+          click () {
+            console.log('Saving')
+          }
+        },
+        {
+          label: 'Add Folder to Project',
+          click () {
+            console.log('Adding project!')
+            const folder = dialog.showOpenDialog({properties: ['openDirectory']}) // We only ever get one folder
+            mainWindow.webContents.send('folder', folder)
+          }
+        }
+      ]
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        {role: 'undo'},
+        {role: 'redo'},
+        {type: 'separator'},
+        {role: 'cut'},
+        {role: 'copy'},
+        {role: 'paste'},
+        {role: 'pasteandmatchstyle'},
+        {role: 'delete'},
+        {role: 'selectall'}
+      ]
+    },
+    {
+      role: 'help',
+      submenu: [
+        {
+          label: 'Learn More',
+          click () { shell.openExternal('https://github.com/jacsmith21/proton') }
+        }
+      ]
+    }
+  ]
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 }
 
 require('electron-context-menu')({

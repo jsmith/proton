@@ -23,3 +23,15 @@ export const range = (a, b = 0, interval = 1) => {
   }
   return range
 }
+
+export const TREE = {
+  'root': {
+    'folder 1': {
+      'item 1': {},
+      'folder 2': {
+        'item 2': {}
+      }
+    },
+    'item 3': {}
+  }
+}

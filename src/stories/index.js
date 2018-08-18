@@ -1,12 +1,16 @@
 import { storiesOf } from '@storybook/vue'
 import Tone from 'tone'
+
 import Sequencer from '@/components/Sequencer'
 import Piano from '@/components/Piano'
 import Key from '@/components/Key'
 import Toolbar from '@/components/Toolbar'
+import FileExplorer from '@/components/FileExplorer'
+import { TREE } from '@/_'
 
 let synth = new Tone.Synth().toMaster()
 
+// noinspection RequiredAttributes
 storiesOf(Key.name, module)
   .add('White', () => ({
     data () {
@@ -18,7 +22,7 @@ storiesOf(Key.name, module)
     data () {
       return {synth}
     },
-    template: '<key note="C#4" :synth="synth"/>'
+    template: '<key note="C#4" :synth="synth">'
   }))
 
 storiesOf(Piano.name, module)
@@ -34,4 +38,21 @@ storiesOf(Sequencer.name, module)
 storiesOf(Toolbar.name, module)
   .add('Standard', () => ({
     template: '<v-app dark><toolbar/></v-app>'
+  }))
+
+// noinspection RequiredAttributes
+storiesOf(FileExplorer.name, module)
+  .add('Standard', () => ({
+    template: `
+    <v-app dark>
+      <v-list dense style="max-width: 300px; height: 100%">
+        <file-explorer :children="children.root" label="root"></file-explorer>
+      </v-list>
+    </v-app>
+    `,
+    data () {
+      return {
+        children: TREE
+      }
+    }
   }))

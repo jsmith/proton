@@ -24,7 +24,6 @@
 </template>
 
 <script>
-  import FileExplorer from './components/FileExplorer'
   import Toolbar from '@/components/Toolbar'
   import Drawer from '@/components/Drawer'
 
@@ -34,10 +33,9 @@
 
   export default {
     name: 'Proton',
-    components: {Drawer, Toolbar, FileExplorer},
+    components: {Drawer, Toolbar},
     data: () => ({
-      drawer: true,
-      tree: tree
+      children: tree
     })
   }
 </script>

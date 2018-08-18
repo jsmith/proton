@@ -1,6 +1,7 @@
 process.env.BABEL_ENV = 'renderer'
 
 const path = require('path')
+const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 const { PRODUCTION } = require('../.electron-vue/utils')
@@ -28,6 +29,9 @@ module.exports = {
     __dirname: process.env.NODE_ENV !== PRODUCTION
   },
   plugins: [
-    new ExtractTextPlugin('styles.css')
+    new ExtractTextPlugin('styles.css'),
+    new webpack.DefinePlugin({
+      'process.env.IS_WEB': 'true'
+    })
   ]
 }
