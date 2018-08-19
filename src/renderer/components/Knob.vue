@@ -2,7 +2,7 @@
   <div class="knob-control" :style="{ height: size-5 + 'px' }">
     <!--suppress HtmlUnknownAttribute -->
     <svg :width="size" :height="size" viewBox="0 0 100 100"
-         @click="onClick" @mousedown="onMouseDown" @mouseup="onMouseUp">
+         @click="click" @mousedown="onMouseDown" @mouseup="onMouseUp">
       <path
           :d="rangePath"
           :stroke-width="strokeWidth"
@@ -23,7 +23,7 @@
           text-anchor="middle"
           :fill="textColor"
           class="knob-control__text-display">
-        {{valueDisplay}}
+        {{ valueDisplay }}
       </text>
     </svg>
   </div>
@@ -36,6 +36,17 @@
   const MIN_RADIANS = 4 * Math.PI / 3
   const MAX_RADIANS = -Math.PI / 3
 
+  // const ifEnabled = (target, name, descriptor) => {
+  //   const original = descriptor.value
+  //   descriptor.value = (...args) => {
+  //     if (!this.enabled) {
+  //       return
+  //     }
+  //     return original(...args)
+  //   }
+  //   return descriptor
+  // }
+
   // map a value (x) from one range (in min/max) onto another (out min/max)
   const mapRange = (x, inMin, inMax, outMin, outMax) => {
     return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin
@@ -44,10 +55,10 @@
   export default {
     name: 'Knob',
     data () {
-      return {}
+      return {initialX: null}
     },
     props: {
-      value: {type: Number, required: true},
+      value: {type: Number},
       max: {type: Number, default: 100},
       min: {type: Number, default: 0},
       stepSize: {type: Number, default: 1},
@@ -55,7 +66,7 @@
       size: {type: Number, default: 100},
       primaryColor: {type: String, default: '#409eff'},
       secondaryColor: {type: String, default: '#dcdfe6'},
-      textColor: {type: String, default: '#000000'},
+      textColor: {type: String, default: '#dcdfe6'},
       strokeWidth: {type: Number, default: 17},
       valueDisplayFunction: {type: Function, default: (v) => v}
     },
@@ -74,7 +85,11 @@
             want the value arc to start drawing from the 'zero' point, but, in the case
             that the minimum and maximum values are both above zero, we set the 'zero point'
             at the supplied minimum, so the value arc renders as the user would expect */
-        if (this.min > 0 && this.max > 0) { return mapRange(this.min, this.min, this.max, MIN_RADIANS, MAX_RADIANS) } else { return mapRange(0, this.min, this.max, MIN_RADIANS, MAX_RADIANS) }
+        if (this.min > 0 && this.max > 0) {
+          return mapRange(this.min, this.min, this.max, MIN_RADIANS, MAX_RADIANS)
+        } else {
+          return mapRange(0, this.min, this.max, MIN_RADIANS, MAX_RADIANS)
+        }
       },
       valueRadians () {
         return mapRange(this.value, this.min, this.max, MIN_RADIANS, MAX_RADIANS)
@@ -117,21 +132,19 @@
       updatePosition (e) {
         const dx = e.offsetX - this.size / 2
         const dy = this.size / 2 - e.offsetY
-        const angle = Math.atan2(dy, dx)
-        let v
+        let angle = Math.atan2(dy, dx)
+        console.log(angle)
+        if (!(angle > MAX_RADIANS) || !(angle > MAX_RADIANS)) return
+
         /* bit of weird looking logic to map the angles returned by Math.atan2() onto
           our own unconventional coordinate system */
-        const start = -Math.PI / 2 - Math.PI / 6
-        if (angle > MAX_RADIANS) {
-          v = mapRange(angle, MIN_RADIANS, MAX_RADIANS, this.min, this.max)
-        } else if (angle < start) {
-          v = mapRange(angle + 2 * Math.PI, MIN_RADIANS, MAX_RADIANS, this.min, this.max)
-        } else {
-          return
-        }
-        this.$emit('input', Math.round((v - this.min) / this.stepSize) * this.stepSize + this.min)
+        if (angle < -Math.PI / 2 - Math.PI / 6) angle = angle + 2 * Math.PI
+
+        let v = mapRange(angle, MIN_RADIANS, MAX_RADIANS, this.min, this.max)
+        v = Math.round((v - this.min) / this.stepSize) * this.stepSize + this.min
+        this.$emit('input', v)
       },
-      onClick (e) {
+      click (e) {
         if (!this.disabled) {
           this.updatePosition(e)
         }
