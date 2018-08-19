@@ -2,7 +2,6 @@
 
 import { app, BrowserWindow, Menu, shell, dialog } from 'electron'
 import { DEVELOPMENT } from '../_'
-import assert from 'assert'
 
 /**
  * Set `__static` path to static files in production

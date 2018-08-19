@@ -22,8 +22,10 @@
       <div class="milli">bpm</div>
     </div>
 
+    <v-btn icon><icon name="align-justify"></icon></v-btn>
     <v-spacer></v-spacer>
     <v-btn icon><icon scale="1.3" name="user"></icon></v-btn>
+
   </v-toolbar>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
   <v-list dense>
-    <v-list-tile v-for="instrument in instruments">
+    <v-list-tile v-for="instrument in instruments" @click="">
       <v-list-tile-content>
         <v-list-tile-title>{{ instrument }}</v-list-tile-title>
       </v-list-tile-content>

@@ -15,8 +15,7 @@
       </v-content>
 
       <v-footer app>
-        <v-spacer></v-spacer>
-        <span>&copy; Jacob Smith 2018</span>
+        <span style="width: 100%; text-align: center">&copy; Jacob Smith 2018</span>
       </v-footer>
 
     </v-app>

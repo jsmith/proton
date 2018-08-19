@@ -6,6 +6,8 @@ import Piano from '@/components/Piano'
 import Key from '@/components/Key'
 import Toolbar from '@/components/Toolbar'
 import FileExplorer from '@/components/FileExplorer'
+import ChannelRack from '@/components/ChannelRack'
+import Knob from '@/components/Knob'
 import { TREE } from '@/_'
 
 let synth = new Tone.Synth().toMaster()
@@ -54,5 +56,29 @@ storiesOf(FileExplorer.name, module)
       return {
         children: TREE
       }
+    }
+  }))
+
+storiesOf(ChannelRack.name, module)
+  .add('Standard', () => ({
+    template: `
+    <v-app dark>
+      <channel-rack :instruments="instruments" style="max-width: 300px"></channel-rack>
+    </v-app>
+    `,
+    components: {ChannelRack},
+    data () {
+      return {
+        instruments: ['Synth A', 'SynthB']
+      }
+    }
+  }))
+
+storiesOf(Knob.name, module)
+  .add('Standard', () => ({
+    template: '<knob v-model="value"></knob>',
+    components: {Knob},
+    data () {
+      return {value: 0}
     }
   }))

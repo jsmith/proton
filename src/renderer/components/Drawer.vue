@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer fixed clipped permanent app>
     <v-list dense>
-      <file-explorer v-for="(children, label) in projects" :children="children" :label="label"></file-explorer>
+      <file-explorer v-for="(children, label) in projects" :key="label" :children="children" :label="label"></file-explorer>
     </v-list>
   </v-navigation-drawer>
 </template>
