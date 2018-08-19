@@ -1,8 +1,7 @@
 <template>
   <div class="knob-control" :style="{ height: size-5 + 'px' }">
     <!--suppress HtmlUnknownAttribute -->
-    <svg :width="size" :height="size" viewBox="0 0 100 100"
-         @click="click" @mousedown="onMouseDown" @mouseup="onMouseUp">
+    <svg :width="size" :height="size" viewBox="0 0 100 100" @click="click" @mousedown="mousedown" @mouseup="mouseup">
       <path
           :d="rangePath"
           :stroke-width="strokeWidth"
@@ -55,7 +54,7 @@
   export default {
     name: 'Knob',
     data () {
-      return {initialX: null}
+      return {initialY: null}
     },
     props: {
       value: {type: Number},
@@ -130,37 +129,30 @@
     },
     methods: {
       updatePosition (e) {
-        const dx = e.offsetX - this.size / 2
-        const dy = this.size / 2 - e.offsetY
-        let angle = Math.atan2(dy, dx)
-        console.log(angle)
-        if (!(angle > MAX_RADIANS) || !(angle > MAX_RADIANS)) return
-
-        /* bit of weird looking logic to map the angles returned by Math.atan2() onto
-          our own unconventional coordinate system */
-        if (angle < -Math.PI / 2 - Math.PI / 6) angle = angle + 2 * Math.PI
-
-        let v = mapRange(angle, MIN_RADIANS, MAX_RADIANS, this.min, this.max)
-        v = Math.round((v - this.min) / this.stepSize) * this.stepSize + this.min
-        this.$emit('input', v)
+        const diff = -(e.clientY - this.initialY)
+        this.initialY = e.clientY
+        this.$emit('input', Math.min(this.max, Math.max(this.min, this.value + Math.round(diff))))
       },
       click (e) {
         if (!this.disabled) {
           this.updatePosition(e)
         }
       },
-      onMouseDown (e) {
+      mousedown (e) {
         if (!this.disabled) {
           e.preventDefault()
+          this.initialY = e.clientY
+          document.documentElement.style.cursor = 'ns-resize'
           window.addEventListener('mousemove', this.onMouseMove)
-          window.addEventListener('mouseup', this.onMouseUp)
+          window.addEventListener('mouseup', this.mouseup)
         }
       },
-      onMouseUp (e) {
+      mouseup (e) {
         if (!this.disabled) {
           e.preventDefault()
+          document.documentElement.style.cursor = 'default'
           window.removeEventListener('mousemove', this.onMouseMove)
-          window.removeEventListener('mouseup', this.onMouseUp)
+          window.removeEventListener('mouseup', this.mouseup)
         }
       },
       onMouseMove (e) {
@@ -173,7 +165,11 @@
   }
 </script>
 
-<style>
+<style scoped>
+  .knob-control:hover {
+    cursor: ns-resize;
+  }
+
   .knob-control__range {
     fill: none;
     transition: stroke .1s ease-in;
