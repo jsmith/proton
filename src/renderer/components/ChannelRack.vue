@@ -1,13 +1,16 @@
 <template>
-  <v-list dense>
-    <v-list-tile v-for="instrument in instruments" @click="">
-      <v-list-tile-content>
-        <v-list-tile-title>{{ instrument }}</v-list-tile-title>
-      </v-list-tile-content>
-      <v-list-tile-action>
-        <dot-button @click="handle(instrument)"></dot-button>
-      </v-list-tile-action>
-    </v-list-tile>
+  <v-list dense style="padding: 0">
+    <template v-for="(instrument, index) in instruments">
+      <v-list-tile @click="" :key="instrument">
+        <v-list-tile-content>
+          <v-list-tile-title>{{ instrument }}</v-list-tile-title>
+        </v-list-tile-content>
+        <v-list-tile-action>
+          <dot-button @click="handle(instrument)"></dot-button>
+        </v-list-tile-action>
+      </v-list-tile>
+      <v-divider v-if="index !== instruments.length - 1"></v-divider>
+    </template>
   </v-list>
 </template>
 

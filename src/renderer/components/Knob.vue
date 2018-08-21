@@ -1,7 +1,27 @@
 <template>
   <div class="knob-control" :style="{ height: size-5 + 'px' }">
     <!--suppress HtmlUnknownAttribute -->
-    <svg :width="size" :height="size" viewBox="0 0 100 100" @click="click" @mousedown="mousedown" @mouseup="mouseup">
+    <svg
+        v-if="potentiometer"
+        :width="size"
+        :height="size"
+        viewBox="0 0 100 100"
+        @click="click"
+        @mousedown="mousedown"
+        @mouseup="mouseup">
+      <circle :r="center" :cx="center" :cy="center" :fill="secondaryColor"></circle>
+      <rect :width="rectWidth" :x="center - rectWidth / 2" :y="center - size / 8 * 4" :height="size / 3" fill="#000" :transform="transform"></rect>
+    </svg>
+
+    <!--suppress HtmlUnknownAttribute -->
+    <svg
+        v-else
+        :width="size"
+        :height="size"
+        viewBox="0 0 100 100"
+        @click="click"
+        @mousedown="mousedown"
+        @mouseup="mouseup">
       <path
           :d="rangePath"
           :stroke-width="strokeWidth"
@@ -25,6 +45,7 @@
         {{ valueDisplay }}
       </text>
     </svg>
+
   </div>
 </template>
 
@@ -65,9 +86,11 @@
       size: {type: Number, default: 100},
       primaryColor: {type: String, default: '#409eff'},
       secondaryColor: {type: String, default: '#dcdfe6'},
-      textColor: {type: String, default: '#dcdfe6'},
+      textColor: {type: String, default: '#000'},
       strokeWidth: {type: Number, default: 17},
-      valueDisplayFunction: {type: Function, default: (v) => v}
+      valueDisplayFunction: {type: Function, default: (v) => v},
+      potentiometer: {type: Boolean, default: false},
+      rectWidth: {type: Number, default: 6}
     },
     computed: {
       rangePath () {
@@ -92,6 +115,9 @@
       },
       valueRadians () {
         return mapRange(this.value, this.min, this.max, MIN_RADIANS, MAX_RADIANS)
+      },
+      valueDegrees () {
+        return this.valueRadians * 360 / 2 / Math.PI - 90
       },
       minX () {
         return MID_X + Math.cos(MIN_RADIANS) * RADIUS
@@ -125,6 +151,12 @@
       },
       valueDisplay () {
         return this.valueDisplayFunction(this.value)
+      },
+      transform () {
+        return `rotate(${-this.valueDegrees} ${this.center} ${this.center})`
+      },
+      center () {
+        return this.size / 2
       }
     },
     methods: {

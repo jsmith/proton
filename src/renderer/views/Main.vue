@@ -1,7 +1,8 @@
 <template>
   <div>
     <note-sequencer></note-sequencer>
-    <knob v-model="value" :stroke-width="8" :size="50"></knob>
+    <knob v-model="value" :stroke-width="8" :size="100" potentiometer></knob>
+    <knob v-model="value" :stroke-width="8" :size="100"></knob>
   </div>
 </template>
 

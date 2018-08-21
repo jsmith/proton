@@ -76,7 +76,14 @@ storiesOf(ChannelRack.name, module)
 
 storiesOf(Knob.name, module)
   .add('Standard', () => ({
-    template: '<knob v-model="value"></knob>',
+    template: '<knob v-model="value" style="margin: 50px"></knob>',
+    components: {Knob},
+    data () {
+      return {value: 0}
+    }
+  }))
+  .add('Potentiometer', () => ({
+    template: '<knob v-model="value" style="margin: 50px" potentiometer></knob>',
     components: {Knob},
     data () {
       return {value: 0}
