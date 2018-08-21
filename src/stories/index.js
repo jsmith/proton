@@ -8,6 +8,8 @@ import Toolbar from '@/components/Toolbar'
 import FileExplorer from '@/components/FileExplorer'
 import ChannelRack from '@/components/ChannelRack'
 import Knob from '@/components/Knob'
+import Tabs from '@/components/Tabs'
+import Tab from '@/components/Tab'
 import { TREE } from '@/_'
 
 let synth = new Tone.Synth().toMaster()
@@ -88,4 +90,30 @@ storiesOf(Knob.name, module)
     data () {
       return {value: 0}
     }
+  }))
+
+storiesOf(Tabs.name, module)
+  .add('Standard', () => ({
+    template: `
+     <tabs>
+       <tab name="First tab">
+         This is the content of the first tab
+       </tab>
+       <tab name="Second tab">
+         This is the content of the second tab
+       </tab>
+       <tab name="Disabled tab" :is-disabled="true">
+         This content will be unavailable while :is-disabled prop set to true
+       </tab>
+       <tab id="oh-hi-mark" name="Custom fragment">
+           The fragment that is appended to the url can be customized
+       </tab>
+       <tab prefix="<span class='glyphicon glyphicon-star'></span> " 
+           name="Prefix and suffix" 
+           suffix=" <span class='badge'>4</span>">
+          A prefix and a suffix can be added
+       </tab>
+    </tabs>
+    `,
+    components: {Tab, Tabs}
   }))

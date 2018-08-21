@@ -6,7 +6,7 @@ import Key from '@/components/Key'
 import Sequencer from '@/components/Sequencer'
 import Toolbar from '@/components/Toolbar'
 import FileExplorer from '@/components/FileExplorer'
-import middleware from '@/middlerware'
+import middleware from '@/middleware'
 
 middleware()
 

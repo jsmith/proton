@@ -3,7 +3,7 @@ import axios from 'axios'
 import 'vuetify/dist/vuetify.css'
 import 'vue-awesome/icons'
 
-import middleware from '@/middlerware'
+import middleware from '@/middleware'
 import App from '@/App'
 import router from '@/router'
 import store from '@/store'
