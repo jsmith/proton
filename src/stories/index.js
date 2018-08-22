@@ -96,21 +96,19 @@ storiesOf(Tabs.name, module)
   .add('Standard', () => ({
     template: `
      <tabs>
-       <tab name="First tab">
+       <tab name="Playlist 1">
          This is the content of the first tab
        </tab>
-       <tab name="Second tab">
+       <tab name="Sequence 1">
          This is the content of the second tab
        </tab>
-       <tab name="Disabled tab" :is-disabled="true">
+       <tab name="Sequence 2" :is-disabled="true">
          This content will be unavailable while :is-disabled prop set to true
        </tab>
-       <tab id="oh-hi-mark" name="Custom fragment">
+       <tab name="Sequence 4">
            The fragment that is appended to the url can be customized
        </tab>
-       <tab prefix="<span class='glyphicon glyphicon-star'></span> " 
-           name="Prefix and suffix" 
-           suffix=" <span class='badge'>4</span>">
+       <tab name="Master">
           A prefix and a suffix can be added
        </tab>
     </tabs>

@@ -4,17 +4,18 @@
       <li
           v-for="(tab, i) in tabs"
           :key="i"
-          :class="{ 'is-active': tab.isActive, 'is-disabled': tab.isDisabled }"
+          :class="{ 'is-active': tab.isActive }"
           class="tabs-component-tab"
           role="presentation"
           v-show="tab.isVisible">
-        <a v-html="tab.header"
+        <a v-html="tab.name"
            :aria-controls="tab.hash"
            :aria-selected="tab.isActive"
            @click="selectTab(tab.hash, $event)"
            :href="tab.hash"
            class="tabs-component-tab-a"
            role="tab"></a>
+        <v-icon size="13px" class="close-icon">close</v-icon>
       </li>
     </ul>
     <div class="tabs-component-panels">
@@ -31,8 +32,7 @@
     props: {cacheLifetime: {default: 5}},
 
     data: () => ({
-      tabs: [],
-      activeTabHash: ''
+      tabs: []
     }),
 
     computed: {
@@ -40,27 +40,16 @@
         return `vue-tabs-component.cache.${window.location.host}${window.location.pathname}`
       }
     },
-
     created () {
       this.tabs = this.$children
     },
 
     mounted () {
-      window.addEventListener('hashchange', () => this.selectTab(window.location.hash))
-
-      if (this.findTab(window.location.hash)) {
-        this.selectTab(window.location.hash)
-        return
-      }
-
       const previousSelectedTabHash = expiringStorage.get(this.storageKey)
 
       if (this.findTab(previousSelectedTabHash)) {
         this.selectTab(previousSelectedTabHash)
-        return
-      }
-
-      if (this.tabs.length) {
+      } else if (this.tabs.length) {
         this.selectTab(this.tabs[0].hash)
       }
     },
@@ -71,18 +60,12 @@
       },
 
       selectTab (selectedTabHash, event) {
-        // See if we should store the hash in the url fragment.
         if (event) {
           event.preventDefault()
         }
 
         const selectedTab = this.findTab(selectedTabHash)
-
         if (!selectedTab) {
-          return
-        }
-
-        if (selectedTab.isDisabled) {
           return
         }
 
@@ -91,8 +74,6 @@
         })
 
         this.$emit('changed', { tab: selectedTab })
-
-        this.activeTabHash = selectedTab.hash
 
         expiringStorage.set(this.storageKey, selectedTab.hash, this.cacheLifetime)
       }
@@ -104,12 +85,10 @@
   .tabs-component
     margin: 4em 0
 
-
   .tabs-component-tabs
     border: solid 1px #ddd
     border-radius: 6px
     margin-bottom: 5px
-
 
   .tabs-component-tabs
     border: 0
@@ -119,37 +98,57 @@
     margin-bottom: -1px
 
   .tabs-component-tab
+    position: relative
     color: #999
     font-size: 14px
     font-weight: 600
     list-style: none
     background-color: #fff
-    border: solid 1px #ddd
-    border-radius: 3px 3px 0 0
+    width: 150px
+    text-align: center
+    border-left: 1px solid #ddd
+    box-shadow: inset 0 -1px 0 #ddd
 
-  .tabs-component-tab:hover
-    color: #666
-
-  .tabs-component-tab.is-active
-    color: #000
-    border-bottom: solid 1px #fff
-    border-left: solid 3px #33a3ff
-
-  .tabs-component-tab.is-disabled *
-    color: #cdcdcd
-    cursor: not-allowed !important
+    &.is-active
+      color: #000
+      border-bottom: solid 1px #fff
+      box-shadow: 3px 0 #33a3ff inset
 
   .tabs-component-tab-a
     align-items: center
     color: inherit
-    display: flex
     padding: .75em 1em
     text-decoration: none
+    display: block
 
   .tabs-component-panels
     background-color: #fff
     border: solid 1px #ddd
-    border-radius: 0 6px 6px 6px
     box-shadow: 0 0 10px rgba(0, 0, 0, .05)
     padding: 4em 2em
+
+  .tabs-component-tab:hover .close-icon
+    transform: scale(1)
+    transition-duration: .16s
+
+  .close-icon
+    top: 0.75em
+    right: 0.5em
+    z-index: 2
+    width: 1.5em
+    height: 1.5em
+    line-height: 1.5
+    text-align: center
+    border-radius: 3px
+    overflow: hidden
+    transform: scale(0)
+    transition: transform .08s
+    position: absolute
+
+    &:hover
+      cursor: pointer
+      color: #001133
+      background-color: #568af2
+      transform: scale(1)
+      transition-duration: .16s
 </style>
