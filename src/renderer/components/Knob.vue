@@ -175,7 +175,7 @@
           e.preventDefault()
           this.initialY = e.clientY
           document.documentElement.style.cursor = 'ns-resize'
-          window.addEventListener('mousemove', this.onMouseMove)
+          window.addEventListener('mousemove', this.mousemove)
           window.addEventListener('mouseup', this.mouseup)
         }
       },
@@ -183,11 +183,11 @@
         if (!this.disabled) {
           e.preventDefault()
           document.documentElement.style.cursor = 'default'
-          window.removeEventListener('mousemove', this.onMouseMove)
+          window.removeEventListener('mousemove', this.mousemove)
           window.removeEventListener('mouseup', this.mouseup)
         }
       },
-      onMouseMove (e) {
+      mousemove (e) {
         if (!this.disabled) {
           e.preventDefault()
           this.updatePosition(e)

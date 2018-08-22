@@ -15,8 +15,7 @@
       name: { required: true }
     },
     data: () => ({
-      isActive: false,
-      isVisible: true
+      isActive: false
     }),
     computed: {
       hash () {

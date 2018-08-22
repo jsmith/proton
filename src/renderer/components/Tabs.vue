@@ -1,21 +1,9 @@
 <template>
-  <div class="tabs-component">
-    <ul role="tablist" class="tabs-component-tabs">
-      <li
-          v-for="(tab, i) in tabs"
-          :key="i"
-          :class="{ 'is-active': tab.isActive }"
-          class="tabs-component-tab"
-          role="presentation"
-          v-show="tab.isVisible">
-        <a v-html="tab.name"
-           :aria-controls="tab.hash"
-           :aria-selected="tab.isActive"
-           @click="selectTab(tab.hash, $event)"
-           :href="tab.hash"
-           class="tabs-component-tab-a"
-           role="tab"></a>
-        <v-icon size="13px" class="close-icon">close</v-icon>
+  <div>
+    <ul class="tabs-component-tabs">
+      <li v-for="(tab, i) in tabs" :key="i" :class="{ 'is-active': tab.isActive }" class="tabs-component-tab">
+        <span @click="selectTab(tab.hash, $event)" class="text">{{ tab.name }}</span>
+        <v-icon size="13px" class="close-icon" @click="close(i)">close</v-icon>
       </li>
     </ul>
     <div class="tabs-component-panels">
@@ -76,26 +64,26 @@
         this.$emit('changed', { tab: selectedTab })
 
         expiringStorage.set(this.storageKey, selectedTab.hash, this.cacheLifetime)
+      },
+      close (i) {
+        this.tabs[i].isActive = false
+        const tab = this.tabs[i + 1] || this.tabs[i - 1] || {}
+        this.tabs.splice(i, 1)
+        this.selectTab(tab.hash)
       }
     }
   }
 </script>
 
 <style lang="sass" scoped>
-  .tabs-component
-    margin: 4em 0
-
-  .tabs-component-tabs
-    border: solid 1px #ddd
-    border-radius: 6px
-    margin-bottom: 5px
+  $border: #ddd
 
   .tabs-component-tabs
     border: 0
     align-items: stretch
     display: flex
     justify-content: flex-start
-    margin-bottom: -1px
+    box-shadow: inset 0 -1px 0 $border
 
   .tabs-component-tab
     position: relative
@@ -106,30 +94,45 @@
     background-color: #fff
     width: 150px
     text-align: center
-    border-left: 1px solid #ddd
-    box-shadow: inset 0 -1px 0 #ddd
+    border-left: 1px solid $border
+    box-shadow: inset 0 -1px 0 $border
 
     &.is-active
       color: #000
-      border-bottom: solid 1px #fff
-      box-shadow: 3px 0 #33a3ff inset
+      box-shadow: unset
 
-  .tabs-component-tab-a
+      &:last-of-type
+        box-shadow: 1px 0 0 $border
+
+      &:before
+        content: ""
+        position: absolute
+        pointer-events: none
+        z-index: 2
+        top: 0
+        left: -1px
+        bottom: 0
+        width: 3px
+        background: #568af2
+
+    &:hover .close-icon
+      transform: scale(1)
+      transition-duration: .16s
+
+
+  .text
     align-items: center
-    color: inherit
     padding: .75em 1em
     text-decoration: none
     display: block
 
+    &:hover
+      cursor: default
+
   .tabs-component-panels
     background-color: #fff
-    border: solid 1px #ddd
     box-shadow: 0 0 10px rgba(0, 0, 0, .05)
     padding: 4em 2em
-
-  .tabs-component-tab:hover .close-icon
-    transform: scale(1)
-    transition-duration: .16s
 
   .close-icon
     top: 0.75em

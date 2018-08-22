@@ -10,6 +10,8 @@ import ChannelRack from '@/components/ChannelRack'
 import Knob from '@/components/Knob'
 import Tabs from '@/components/Tabs'
 import Tab from '@/components/Tab'
+import Mixer from '@/components/Mixer'
+import Slider from '@/components/Slider'
 import { TREE } from '@/_'
 
 let synth = new Tone.Synth().toMaster()
@@ -114,4 +116,21 @@ storiesOf(Tabs.name, module)
     </tabs>
     `,
     components: {Tab, Tabs}
+  }))
+
+storiesOf(Mixer.name, module)
+  .add('Standard', () => ({
+    template: `
+    <mixer></mixer>
+    `,
+    components: {Mixer}
+  }))
+
+storiesOf(Slider.name, module)
+  .add('Standard', () => ({
+    template: `
+    <slider v-model="value"></slider>
+    `,
+    components: {Slider},
+    data: () => ({value: 0})
   }))
