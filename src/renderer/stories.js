@@ -12,6 +12,7 @@ import Tabs from '@/components/Tabs'
 import Tab from '@/components/Tab'
 import Mixer from '@/components/Mixer'
 import Slider from '@/components/Slider'
+import Bpm from '@/components/Bpm'
 import { TREE } from '@/_'
 
 let synth = new Tone.Synth().toMaster()
@@ -133,4 +134,13 @@ storiesOf(Slider.name, module)
     `,
     components: {Slider},
     data: () => ({value: 70})
+  }))
+
+storiesOf(Bpm.name, module)
+  .add('Standard', () => ({
+    template: `
+    <bpm v-model="value"></bpm>
+    `,
+    components: {Bpm},
+    data: () => ({value: 128})
   }))

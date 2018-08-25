@@ -57,3 +57,71 @@ export const px = {
     }
   }
 }
+
+export const draggable = {
+  props: {disabled: {type: Boolean, default: false}},
+  data () {
+    return {
+      initial: null,
+      previous: null,
+      cursor: 'ns-resize',
+      el: null,
+      dragRef: 'drag'
+    }
+  },
+  methods: {
+    mousedown (e) {
+      if (!this.disabled) {
+        e.preventDefault()
+        this.initial = this.previous = {x: e.clientX, y: e.clientY}
+        document.documentElement.style.cursor = this.cursor
+        window.addEventListener('mousemove', this.mousemove)
+        window.addEventListener('mouseup', this.mouseup)
+      }
+    },
+    mouseup (e) {
+      if (!this.disabled) {
+        e.preventDefault()
+        document.documentElement.style.cursor = 'default'
+        window.removeEventListener('mousemove', this.mousemove)
+        window.removeEventListener('mouseup', this.mouseup)
+      }
+    },
+    mousemove (e) {
+      if (!this.disabled) {
+        e.preventDefault()
+        const totalY = e.clientY - this.initial.y
+        const totalX = e.clientX - this.initial.x
+
+        const changeY = e.clientY - this.previous.y
+        const changeX = e.clientX - this.previous.x
+
+        this.previous = {x: e.clientX, y: e.clientY}
+        this.move(e, {totalX, totalY, changeY, changeX})
+      }
+    },
+    move (e) {},
+    squash (v, low, high) {
+      return Math.max(low, Math.min(high, v))
+    },
+    mapRange (x, inMin, inMax, outMin, outMax) {
+      return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin
+    }
+  },
+  mounted () {
+    this.el = this.$refs[this.dragRef]
+
+    this.el.addEventListener('mousedown', this.mousedown)
+    this.el.addEventListener('mouseup', this.mouseup)
+    this.el.addEventListener('mouseenter', () => {
+      this.el.style.cursor = this.cursor
+    })
+    this.el.addEventListener('mouseleave', () => {
+      this.el.style.cursor = 'default'
+    })
+  },
+  destroyed () {
+    this.el.removeEventListener('mousedown', this.mousedown)
+    this.el.removeEventListener('mouseup', this.mouseup)
+  }
+}

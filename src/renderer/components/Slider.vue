@@ -6,11 +6,13 @@
     <rect :height="height" :width="width" :fill="bg" :style="style"></rect>
     <rect :height="rightHeight" :y="getPosition(rightHeight)" :width="width" :fill="fg" :style="style"></rect>
 
-    <polygon :points="points" class="level" @mousedown="mousedown" @mouseup="mouseup"></polygon>
+    <polygon :points="points" class="level" :ref="dragRef"></polygon>
   </svg>
 </template>
 
 <script>
+  import {draggable} from '@/mixins'
+
   export default {
     name: 'Slider',
     props: {
@@ -20,11 +22,13 @@
       left: {type: Number, default: 0},
       value: {type: Number, default: 0}
     },
+    mixins: [draggable],
     data () {
       return {
         style: {x: `${this.width + 2}px`},
         bg: '#ddd',
-        fg: '#3cb7d8'
+        fg: '#3cb7d8',
+        cursor: 'pointer'
       }
     },
     computed: {
@@ -48,23 +52,7 @@
       }
     },
     methods: {
-      mousedown (e) {
-        e.preventDefault()
-        document.documentElement.style.cursor = 'pointer'
-        window.addEventListener('mousemove', this.mousemove)
-        window.addEventListener('mouseup', this.mouseup)
-      },
-      mouseup (e) {
-        e.preventDefault()
-        document.documentElement.style.cursor = 'default'
-        window.removeEventListener('mousemove', this.mousemove)
-        window.removeEventListener('mouseup', this.mouseup)
-      },
-      mousemove (e) {
-        e.preventDefault()
-        this.updatePosition(e)
-      },
-      updatePosition (e) {
+      move (e) {
         let volume = (this.$refs.svg.clientTop + this.height - e.offsetY)
         volume *= 100 / this.height
         volume = Math.max(Math.min(volume, 100), 0)

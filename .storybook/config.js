@@ -17,7 +17,7 @@ Vue.component(Toolbar.name, Toolbar)
 Vue.component(FileExplorer.name, FileExplorer)
 
 function loadStories() {
-  require('../src/stories')
+  require('../src/renderer/stories')
 }
 
 configure(loadStories, module)

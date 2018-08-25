@@ -14,12 +14,12 @@
     <div class="clock">
       <div class="minute">{{ min }}</div>
       <div class="second">: {{ formatNumberLength(sec, 2) }}</div>
-      <div class="milli">. {{ formatNumberLength(milli, 3) }}</div>
+      <div class="small-text">. {{ formatNumberLength(milli, 3) }}</div>
     </div>
 
     <div class="clock">
       <div class="minute">{{ bpm }}</div>
-      <div class="milli">bpm</div>
+      <div class="small-text">bpm</div>
     </div>
 
     <v-btn icon><icon name="align-justify"></icon></v-btn>
@@ -68,9 +68,9 @@
     box-sizing: border-box
     line-height: 1em
 
-  .second, .milli
+  .second, .small-text
     margin-left: 5px
 
-  .milli
+  .small-text
     font-size: .5em
 </style>
