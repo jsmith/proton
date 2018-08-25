@@ -12,7 +12,9 @@ import Tabs from '@/components/Tabs'
 import Tab from '@/components/Tab'
 import Mixer from '@/components/Mixer'
 import Slider from '@/components/Slider'
+import TimeDisplay from '@/components/TimeDisplay'
 import Bpm from '@/components/Bpm'
+import Note from '@/components/Note'
 import { TREE } from '@/_'
 
 let synth = new Tone.Synth().toMaster()
@@ -143,4 +145,22 @@ storiesOf(Bpm.name, module)
     `,
     components: {Bpm},
     data: () => ({value: 128})
+  }))
+
+storiesOf(TimeDisplay.name, module)
+  .add('Standard', () => ({
+    template: `
+    <time-display :time="time"></time-display>
+    `,
+    components: {TimeDisplay},
+    data: () => ({time: {min: 0, sec: 0, milli: 0}})
+  }))
+
+storiesOf(Note.name, module)
+  .add('Standard', () => ({
+    template: `
+    <note :height="20" v-model="length" :width="20"></note>
+    `,
+    components: {Note},
+    data: () => ({length: 1})
   }))

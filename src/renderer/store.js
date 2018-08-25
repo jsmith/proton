@@ -2,8 +2,6 @@ import Vuex from 'vuex'
 import Vue from 'vue'
 import { getField, updateField } from 'vuex-map-fields'
 
-import modules from './modules'
-
 Vue.use(Vuex)
 
 const state = {
@@ -19,6 +17,5 @@ export default new Vuex.Store({
   getters,
   actions,
   mutations,
-  modules,
   strict: process.env.NODE_ENV !== 'production'
 })

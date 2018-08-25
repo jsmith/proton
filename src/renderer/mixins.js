@@ -66,30 +66,40 @@ export const draggable = {
       previous: null,
       cursor: 'ns-resize',
       el: null,
-      dragRef: 'drag'
+      dragRef: 'drag',
+      moving: false
     }
   },
   methods: {
-    mousedown (e) {
+    showCursor () {
+      document.documentElement.style.cursor = this.cursor
+    },
+    resetCursor () {
+      document.documentElement.style.cursor = 'auto'
+    },
+    addListeners (e) {
       if (!this.disabled) {
-        e.preventDefault()
+        this.prevent(e)
+        this.showCursor()
+        this.moving = true
         this.initial = this.previous = {x: e.clientX, y: e.clientY}
-        document.documentElement.style.cursor = this.cursor
         window.addEventListener('mousemove', this.mousemove)
         window.addEventListener('mouseup', this.mouseup)
       }
     },
-    mouseup (e) {
+    removeListeners (e) {
       if (!this.disabled) {
-        e.preventDefault()
-        document.documentElement.style.cursor = 'default'
+        this.prevent(e)
+        this.resetCursor()
+        this.initial = null
+        this.moving = false
         window.removeEventListener('mousemove', this.mousemove)
         window.removeEventListener('mouseup', this.mouseup)
       }
     },
     mousemove (e) {
       if (!this.disabled) {
-        e.preventDefault()
+        this.prevent(e)
         const totalY = e.clientY - this.initial.y
         const totalX = e.clientX - this.initial.x
 
@@ -100,19 +110,28 @@ export const draggable = {
         this.move(e, {totalX, totalY, changeY, changeX})
       }
     },
-    move (e) {},
+    move () {
+      console.warn('`move(e)` not defined')
+    },
     squash (v, low, high) {
       return Math.max(low, Math.min(high, v))
     },
     mapRange (x, inMin, inMax, outMin, outMax) {
       return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin
+    },
+    prevent (e) {
+      if (e && e.preventDefault) e.preventDefault()
     }
   },
   mounted () {
     this.el = this.$refs[this.dragRef]
 
-    this.el.addEventListener('mousedown', this.mousedown)
-    this.el.addEventListener('mouseup', this.mouseup)
+    if (!this.el) {
+      return
+    }
+
+    this.el.addEventListener('mousedown', this.addListeners)
+    this.el.addEventListener('mouseup', this.removeListeners)
     this.el.addEventListener('mouseenter', () => {
       this.el.style.cursor = this.cursor
     })
@@ -121,6 +140,10 @@ export const draggable = {
     })
   },
   destroyed () {
+    if (!this.el) {
+      return
+    }
+
     this.el.removeEventListener('mousedown', this.mousedown)
     this.el.removeEventListener('mouseup', this.mouseup)
   }

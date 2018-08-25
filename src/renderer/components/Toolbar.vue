@@ -11,18 +11,9 @@
         @click="playing = !playing"><icon :name="playing ? 'pause-circle' : 'play-circle'" scale="1.4"></icon></v-btn>
     <v-btn icon style="margin: 0"><icon name="stop-circle" scale="1.4"></icon></v-btn>
 
-    <div class="clock">
-      <div class="minute">{{ min }}</div>
-      <div class="second">: {{ formatNumberLength(sec, 2) }}</div>
-      <div class="small-text">. {{ formatNumberLength(milli, 3) }}</div>
-    </div>
+    <time-display :time="time"></time-display>
+    <bpm v-model="bpm"></bpm>
 
-    <div class="clock">
-      <div class="minute">{{ bpm }}</div>
-      <div class="small-text">bpm</div>
-    </div>
-
-    <v-btn icon><icon name="align-justify"></icon></v-btn>
     <v-spacer></v-spacer>
     <v-btn icon><icon scale="1.3" name="user"></icon></v-btn>
 
@@ -30,25 +21,22 @@
 </template>
 
 <script>
+  import Bpm from '@/components/Bpm'
+  import TimeDisplay from '@/components/TimeDisplay'
+
   export default {
     name: 'Toolbar',
+    components: {TimeDisplay, Bpm},
     data () {
       return {
         title: 'Proton',
-        min: 0,
-        sec: 0,
-        milli: 0,
+        time: {
+          min: 0,
+          sec: 0,
+          milli: 0
+        },
         bpm: 120,
         playing: false
-      }
-    },
-    methods: {
-      formatNumberLength (num, length) {
-        let r = '' + num
-        while (r.length < length) {
-          r = '0' + r
-        }
-        return r
       }
     }
   }
