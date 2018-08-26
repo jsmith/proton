@@ -1,8 +1,8 @@
 <template>
   <div class="note__root">
-    <v-rect :config="config" ref="note" @mousedown="$emit('mousedown', $event)" @mouseup="$emit('mouseup', $event)"></v-rect>
+    <v-rect :config="config" ref="note" @mousedown="mousedown" @contextmenu="rightClick"></v-rect>
     <v-text :config="text"></v-text>
-    <v-rect :config="borderConfig" @mouseenter="initialize" @mouseleave="reset" @mousedown="addListeners"></v-rect>
+    <v-rect :config="border" @mouseenter="initialize" @mouseleave="reset" @mousedown="(_, { evt }) => addListeners(evt)"></v-rect>
   </div>
 </template>
 
@@ -18,7 +18,7 @@
       y: {type: Number, default: 0},
       value: Number,
       note: String,
-      color: {default: '#2b6c9e'}
+      color: {default: '#5a9dff'}
     },
     mixins: [draggable],
     data () {
@@ -41,11 +41,11 @@
           y: this.y
         }
       },
-      borderConfig () {
+      border () {
         return {
           width: this.borderWidth,
           height: this.height,
-          fill: this.in ? '#5b7cb6' : this.color,
+          fill: this.in ? '#66b2ff' : this.color,
           x: this.x + this.width * this.value - this.borderWidth,
           y: this.y,
           cornerRadius: this.radius
@@ -81,6 +81,13 @@
           this.in = true
           this.showCursor()
         }
+      },
+      rightClick (_, { evt }) {
+        evt.preventDefault()
+        this.$emit('contextmenu', evt)
+      },
+      mousedown (e, { evt }) {
+        this.$emit('mousedown', evt)
       }
     },
     mounted () {

@@ -14,7 +14,9 @@ import Mixer from '@/components/Mixer'
 import Slider from '@/components/Slider'
 import TimeDisplay from '@/components/TimeDisplay'
 import Bpm from '@/components/Bpm'
+import tone from '@/components/Tone'
 import Note from '@/components/Note'
+import PlayPause from '@/components/PlayPause'
 import { TREE } from '@/_'
 
 let synth = new Tone.Synth().toMaster()
@@ -44,8 +46,51 @@ storiesOf(Piano.name, module)
 
 storiesOf(Sequencer.name, module)
   .add('Standard', () => ({
-    template: '<sequencer :width="20" :height="16"/>',
+    template: '<sequencer :width="20" :height="16" v-model="notes"/>',
+    data: () => ({notes: []}),
     components: {Sequencer}
+  }))
+  .add('Playable', () => ({
+    template: `<div>
+                <sequencer :width="20" :height="16" v-model="notes" @added="added" @removed="removed"/>
+                <play-pause @play="play" @stop="stop"/>
+                <span>{{ processed }}</span>
+              </div>
+              `,
+    data () {
+      return {notes: [], part: new Tone.Part(this.callback)}
+    },
+    components: {Sequencer, PlayPause},
+    computed: {
+      processed () {
+        return this.notes.map(({ time, note }) => ({time, note}))
+      }
+    },
+    methods: {
+      play () {
+        console.log(this.part._events)
+        Tone.Transport.start()
+      },
+      stop () {
+        Tone.Transport.stop()
+      },
+      added (note) {
+        this.part.add(note.time, note.note)
+      },
+      removed (note) {
+        this.part.remove(note.time)
+      },
+      callback (time, note) {
+        synth.triggerAttackRelease(note, '8n')
+      }
+    },
+    mounted () {
+      this.part.start(0)
+      this.part.loop = true
+      this.part.loopEnd = '1m'
+      this.part.humanize = true
+      Tone.Transport.bpm.value = 90
+    }
   }))
 
 storiesOf(Toolbar.name, module)
@@ -173,4 +218,24 @@ storiesOf(Note.name, module)
     `,
     components: {Note},
     data: () => ({length: 4})
+  }))
+
+storiesOf(tone.name, module)
+  .add('Standard', () => ({
+    template: `
+    <tone></tone>
+    `,
+    components: {tone}
+  }))
+
+storiesOf(PlayPause.name, module)
+  .add('Standard', () => ({
+    template: `
+    <div>
+      <play-pause @play="text = 'playing'" @stop="text = 'stopped'"/>
+      <span>{{ text }}</span>
+    </div>
+    `,
+    data: () => ({text: 'stopped'}),
+    components: {PlayPause}
   }))

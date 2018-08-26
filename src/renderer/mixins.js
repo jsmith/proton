@@ -79,44 +79,46 @@ export const draggable = {
       document.documentElement.style.cursor = 'auto'
     },
     addListeners (e, ...args) {
-      console.log('add')
-
-      if (!this.disabled) {
-        this.prevent(e)
-        this.showCursor()
-        this.moving = true
-        this.initial = this.previous = {x: e.clientX, y: e.clientY}
-        this.mousemoveListner = event => this.mousemove(event, ...args)
-        window.addEventListener('mousemove', this.mousemoveListner)
-        window.addEventListener('mouseup', this.removeListeners)
+      if (!e.which) {
+        console.error('Given event must be mouse event:', e)
       }
+
+      if (e.which !== 1) return
+      if (this.disabled) return
+
+      this.prevent(e)
+      this.showCursor()
+      // noinspection JSUnusedGlobalSymbols
+      this.moving = true
+      this.initial = this.previous = {x: e.clientX, y: e.clientY}
+      this.mousemoveListner = event => this.mousemove(event, ...args)
+      window.addEventListener('mousemove', this.mousemoveListner)
+      window.addEventListener('mouseup', this.removeListeners)
     },
     removeListeners (e) {
-      console.log('remove')
-
-      if (!this.disabled) {
-        this.prevent(e)
-        this.resetCursor()
-        this.initial = null
-        this.moving = false
-        window.removeEventListener('mousemove', this.mousemoveListner)
-        this.mousemoveListner = null
-        window.removeEventListener('mouseup', this.removeListeners)
-        this.reset()
-      }
+      if (this.disabled) return
+      this.prevent(e)
+      this.resetCursor()
+      this.initial = null
+      // noinspection JSUnusedGlobalSymbols
+      this.moving = false
+      window.removeEventListener('mousemove', this.mousemoveListner)
+      this.mousemoveListner = null
+      window.removeEventListener('mouseup', this.removeListeners)
+      this.reset()
     },
     mousemove (e, ...args) {
-      if (!this.disabled) {
-        this.prevent(e)
-        const totalY = e.clientY - this.initial.y
-        const totalX = e.clientX - this.initial.x
+      if (this.disabled) return
 
-        const changeY = e.clientY - this.previous.y
-        const changeX = e.clientX - this.previous.x
+      this.prevent(e)
+      const totalY = e.clientY - this.initial.y
+      const totalX = e.clientX - this.initial.x
 
-        this.previous = {x: e.clientX, y: e.clientY}
-        this.move(e, {totalX, totalY, changeY, changeX}, ...args)
-      }
+      const changeY = e.clientY - this.previous.y
+      const changeX = e.clientX - this.previous.x
+
+      this.previous = {x: e.clientX, y: e.clientY}
+      this.move(e, {totalX, totalY, changeY, changeX}, ...args)
     },
     move () {
       console.warn('`move(e)` not defined')
