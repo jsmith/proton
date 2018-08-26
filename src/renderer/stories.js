@@ -25,28 +25,33 @@ storiesOf(Key.name, module)
     data () {
       return {synth}
     },
-    template: '<key note="C4" :synth="synth"/>'
+    template: '<key note="C4" :synth="synth"/>',
+    components: {Key}
   }))
   .add('Black', () => ({
     data () {
       return {synth}
     },
-    template: '<key note="C#4" :synth="synth">'
+    template: '<key note="C#4" :synth="synth">',
+    components: {Key}
   }))
 
 storiesOf(Piano.name, module)
   .add('Standard', () => ({
-    template: '<piano :octave="4"/>'
+    template: '<piano :octave="4"/>',
+    components: {Piano}
   }))
 
 storiesOf(Sequencer.name, module)
   .add('Standard', () => ({
-    template: '<sequencer :size="30"/>'
+    template: '<sequencer :width="20" :height="16"/>',
+    components: {Sequencer}
   }))
 
 storiesOf(Toolbar.name, module)
   .add('Standard', () => ({
-    template: '<v-app dark><toolbar/></v-app>'
+    template: '<v-app dark><toolbar/></v-app>',
+    components: {Toolbar}
   }))
 
 // noinspection RequiredAttributes
@@ -59,6 +64,7 @@ storiesOf(FileExplorer.name, module)
       </v-list>
     </v-app>
     `,
+    components: {FileExplorer},
     data () {
       return {
         children: TREE
@@ -159,8 +165,12 @@ storiesOf(TimeDisplay.name, module)
 storiesOf(Note.name, module)
   .add('Standard', () => ({
     template: `
-    <note :height="20" v-model="length" :width="20"></note>
+    <v-stage :config="{height: 200, width: 200}">
+      <v-layer>
+        <note :height="16" v-model="length" :width="20" note="C5"></note>
+      </v-layer>
+    </v-stage>
     `,
     components: {Note},
-    data: () => ({length: 1})
+    data: () => ({length: 4})
   }))

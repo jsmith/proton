@@ -1,10 +1,9 @@
 <template>
-  <v-stage :config="{height: 200, width: 200}">
-    <v-layer>
-      <v-rect :config="config" ref="note"></v-rect>
-      <v-rect :config="borderConfig" @mouseenter="initialize" @mouseleave="mouseleave" @mousedown="mousedown" @mouseup="mouseup"></v-rect>
-    </v-layer>
-  </v-stage>
+  <div class="note__root">
+    <v-rect :config="config" ref="note"></v-rect>
+    <v-text :config="text"></v-text>
+    <v-rect :config="borderConfig" @mouseenter="initialize" @mouseleave="reset" @mousedown="mousedown" @mouseup="mouseup"></v-rect>
+  </div>
 </template>
 
 <script>
@@ -15,8 +14,11 @@
     props: {
       height: {type: Number, required: true},
       width: {type: Number, required: true},
+      x: {type: Number, default: 0},
+      y: {type: Number, default: 0},
       value: Number,
-      color: {default: '#609e33'}
+      note: String,
+      color: {default: '#2b6c9e'}
     },
     mixins: [draggable],
     data () {
@@ -24,7 +26,8 @@
         borderWidth: 8,
         cursor: 'ew-resize',
         in: false,
-        radius: 4
+        radius: 4,
+        fontSize: 12
       }
     },
     computed: {
@@ -33,16 +36,27 @@
           width: this.width * this.value,
           height: this.height,
           fill: this.color,
-          cornerRadius: this.radius
+          cornerRadius: this.radius,
+          x: this.x,
+          y: this.y
         }
       },
       borderConfig () {
         return {
           width: this.borderWidth,
           height: this.height,
-          fill: this.in ? '#6cb62d' : this.color,
-          x: this.width * this.value - this.borderWidth,
+          fill: this.in ? '#5b7cb6' : this.color,
+          x: this.x + this.width * this.value - this.borderWidth,
+          y: this.y,
           cornerRadius: this.radius
+        }
+      },
+      text () {
+        return {
+          text: this.note,
+          x: this.x + 3,
+          y: this.y + this.height / 2 - this.fontSize / 2 + 1, // the extra 1 makes it look better
+          fill: '#fff'
         }
       }
     },
@@ -61,13 +75,10 @@
       },
       mouseup (e) {
         this.removeListeners(e)
-        this.reset(true)
-      },
-      mouseleave () {
         this.reset()
       },
-      reset (force = false) {
-        if (!this.moving || force) {
+      reset () {
+        if (!this.moving) {
           this.in = false
           this.resetCursor()
         }
