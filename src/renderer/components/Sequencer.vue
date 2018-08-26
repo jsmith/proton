@@ -16,7 +16,14 @@
       </template>
     </v-layer>
     <v-layer>
-      <note v-for="(note, i) in placed" :key="i" :height="height" :width="width" :x="note.x" :y="note.y" v-model="note.length"></note>
+      <note
+          v-for="(note, i) in placed"
+          :key="i" :height="height"
+          :width="width"
+          :x="note.x"
+          :y="note.y"
+          @mousedown="(e) => addListeners(e, note)"
+          v-model="note.length"></note>
     </v-layer>
   </v-stage>
   <!--<table>-->
@@ -29,14 +36,14 @@
 </template>
 
 <script>
-  import { px } from '@/mixins'
+  import { draggable, px } from '@/mixins'
   import { notes, range, BLACK, WHITE } from '@/_'
   import Note from '@/components/Note'
 
   export default {
     name: 'Sequencer',
     components: {Note},
-    mixins: [px],
+    mixins: [px, draggable],
     props: {height: {type: Number, required: true}, width: {type: Number, required: true}},
     data () {
       return {
@@ -47,7 +54,9 @@
         bpMeasure: 4,
         measures: 2,
         dpBeat: 4,
-        placed: []
+        placed: [],
+        lookup: {},
+        cursor: 'move'
       }
     },
     computed: {
@@ -64,7 +73,10 @@
     methods: {
       range,
       handleClick (row, col) {
-        this.placed.push({x: col * this.width, y: row * this.height, length: 1})
+        const note = {x: col * this.width, y: row * this.height, length: 1, row, col, index: this.placed.length}
+        this.lookup[row] = this.lookup[row] || {}
+        this.lookup[row][col] = note
+        this.placed.push(note)
       },
       divStyle (row, col, color) {
         return {
@@ -89,16 +101,18 @@
           stroke: '#000'
         }
       },
-      dragenter (e) {
-        e.target.style['background-color'] = 'red'
-      },
-      dragleave (e) {
-        e.target.style['background-color'] = null
-      },
-      drop (e) {
-        e.target.style['background-color'] = 'red'
-      },
-      dragover: e => e.preventDefault()
+      move (e, _, note) {
+        const row = Math.floor(e.clientY / this.height)
+        const col = Math.floor(e.clientX / this.width)
+        const { index, length } = this.lookup[note.row][note.col]
+        const newNote = {row, col, length, index, x: col * this.width, y: row * this.height}
+        this.lookup[row] = this.lookup[row] || {}
+        this.lookup[row][col] = newNote
+        this.placed = [
+          ...this.placed.slice(0, index),
+          newNote,
+          ...this.placed.slice(index + 1, this.placed.length)]
+      }
     }
   }
 </script>

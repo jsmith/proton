@@ -67,7 +67,8 @@ export const draggable = {
       cursor: 'ns-resize',
       el: null,
       dragRef: 'drag',
-      moving: false
+      moving: false,
+      mousemoveListner: null
     }
   },
   methods: {
@@ -77,27 +78,34 @@ export const draggable = {
     resetCursor () {
       document.documentElement.style.cursor = 'auto'
     },
-    addListeners (e) {
+    addListeners (e, ...args) {
+      console.log('add')
+
       if (!this.disabled) {
         this.prevent(e)
         this.showCursor()
         this.moving = true
         this.initial = this.previous = {x: e.clientX, y: e.clientY}
-        window.addEventListener('mousemove', this.mousemove)
-        window.addEventListener('mouseup', this.mouseup)
+        this.mousemoveListner = event => this.mousemove(event, ...args)
+        window.addEventListener('mousemove', this.mousemoveListner)
+        window.addEventListener('mouseup', this.removeListeners)
       }
     },
     removeListeners (e) {
+      console.log('remove')
+
       if (!this.disabled) {
         this.prevent(e)
         this.resetCursor()
         this.initial = null
         this.moving = false
-        window.removeEventListener('mousemove', this.mousemove)
-        window.removeEventListener('mouseup', this.mouseup)
+        window.removeEventListener('mousemove', this.mousemoveListner)
+        this.mousemoveListner = null
+        window.removeEventListener('mouseup', this.removeListeners)
+        this.reset()
       }
     },
-    mousemove (e) {
+    mousemove (e, ...args) {
       if (!this.disabled) {
         this.prevent(e)
         const totalY = e.clientY - this.initial.y
@@ -107,7 +115,7 @@ export const draggable = {
         const changeX = e.clientX - this.previous.x
 
         this.previous = {x: e.clientX, y: e.clientY}
-        this.move(e, {totalX, totalY, changeY, changeX})
+        this.move(e, {totalX, totalY, changeY, changeX}, ...args)
       }
     },
     move () {
@@ -121,7 +129,8 @@ export const draggable = {
     },
     prevent (e) {
       if (e && e.preventDefault) e.preventDefault()
-    }
+    },
+    reset () {}
   },
   mounted () {
     this.el = this.$refs[this.dragRef]

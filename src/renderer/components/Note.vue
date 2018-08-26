@@ -1,8 +1,8 @@
 <template>
   <div class="note__root">
-    <v-rect :config="config" ref="note"></v-rect>
+    <v-rect :config="config" ref="note" @mousedown="$emit('mousedown', $event)" @mouseup="$emit('mouseup', $event)"></v-rect>
     <v-text :config="text"></v-text>
-    <v-rect :config="borderConfig" @mouseenter="initialize" @mouseleave="reset" @mousedown="mousedown" @mouseup="mouseup"></v-rect>
+    <v-rect :config="borderConfig" @mouseenter="initialize" @mouseleave="reset" @mousedown="addListeners"></v-rect>
   </div>
 </template>
 
@@ -70,13 +70,6 @@
         if (length < 1) return
         this.$emit('input', length)
       },
-      mousedown (e) {
-        this.addListeners(e)
-      },
-      mouseup (e) {
-        this.removeListeners(e)
-        this.reset()
-      },
       reset () {
         if (!this.moving) {
           this.in = false
@@ -88,6 +81,11 @@
           this.in = true
           this.showCursor()
         }
+      }
+    },
+    mounted () {
+      if (this.value === undefined) {
+        console.warn('saldfj')
       }
     }
   }
