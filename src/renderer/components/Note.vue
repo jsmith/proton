@@ -2,7 +2,7 @@
   <div class="note__root">
     <v-rect :config="config" ref="note" @mousedown="mousedown" @contextmenu="rightClick"></v-rect>
     <v-text :config="text"></v-text>
-    <v-rect :config="border" @mouseenter="initialize" @mouseleave="reset" @mousedown="(_, { evt }) => addListeners(evt)"></v-rect>
+    <v-rect :config="border" @mouseenter="onHover" @mouseleave="afterHover" @mousedown="(_, { evt }) => addListeners(evt)"></v-rect>
   </div>
 </template>
 
@@ -18,22 +18,22 @@
       y: {type: Number, default: 0},
       value: Number,
       note: String,
-      color: {default: '#5a9dff'}
+      color: {default: '#0f82e6'}
     },
     mixins: [draggable],
     data () {
       return {
         borderWidth: 8,
         cursor: 'ew-resize',
-        in: false,
         radius: 4,
-        fontSize: 12
+        fontSize: 12,
+        takeAway: 1 // we take away an extra pixel because it looks better
       }
     },
     computed: {
       config () {
         return {
-          width: this.width * this.value,
+          width: this.width * this.value - this.takeAway,
           height: this.height,
           fill: this.color,
           cornerRadius: this.radius,
@@ -45,8 +45,8 @@
         return {
           width: this.borderWidth,
           height: this.height,
-          fill: this.in ? '#66b2ff' : this.color,
-          x: this.x + this.width * this.value - this.borderWidth,
+          fill: this.in ? '#7ebef7' : this.color,
+          x: this.x + this.width * this.value - this.borderWidth - this.takeAway,
           y: this.y,
           cornerRadius: this.radius
         }
@@ -69,18 +69,6 @@
         if (this.value === length) return
         if (length < 1) return
         this.$emit('input', length)
-      },
-      reset () {
-        if (!this.moving) {
-          this.in = false
-          this.resetCursor()
-        }
-      },
-      initialize () {
-        if (!this.moving) {
-          this.in = true
-          this.showCursor()
-        }
       },
       rightClick (_, { evt }) {
         evt.preventDefault()

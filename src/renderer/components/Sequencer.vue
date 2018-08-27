@@ -43,7 +43,6 @@
     },
     data () {
       return {
-        color: '#174a59',
         lineColor: '#000',
         notes: notes.map(n => ({...n, value: n.value + '4'})).reverse(),
         quarters: 4,
@@ -57,8 +56,8 @@
     computed: {
       styles () {
         return {
-          [BLACK]: this.color,
-          [WHITE]: '#165262'
+          [BLACK]: '#21252b',
+          [WHITE]: '#282c34'
         }
       },
       total () {
@@ -127,7 +126,6 @@
         const sixteenths = rem % this.sixteenths; rem = Math.floor(rem / this.sixteenths)
         const quarters = rem % this.quarters; const bars = Math.floor(rem / this.quarters)
         const time = `${bars}:${quarters}:${sixteenths}`
-        console.log(`${row}, ${col} -> ${time}`)
         return {x: col * this.width, y: row * this.height, time: time, note: this.notes[row].value}
       }
     }

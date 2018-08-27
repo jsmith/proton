@@ -35,3 +35,5 @@ export const TREE = {
     'item 3': {}
   }
 }
+
+export const parseTime = time => time.split(':')

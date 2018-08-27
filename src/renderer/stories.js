@@ -54,7 +54,7 @@ storiesOf(Sequencer.name, module)
     template: `<div>
                 <sequencer :width="20" :height="16" v-model="notes" @added="added" @removed="removed"/>
                 <play-pause @play="play" @stop="stop"/>
-                <span>{{ processed }}</span>
+                <span style="display: block">{{ processed }}</span>
               </div>
               `,
     data () {

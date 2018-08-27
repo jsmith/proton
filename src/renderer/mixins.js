@@ -62,13 +62,12 @@ export const draggable = {
   props: {disabled: {type: Boolean, default: false}},
   data () {
     return {
-      initial: null,
       previous: null,
-      cursor: 'ns-resize',
-      el: null,
+      cursor: 'auto',
       dragRef: 'drag',
       moving: false,
-      mousemoveListner: null
+      mousemoveListner: null,
+      in: false
     }
   },
   methods: {
@@ -79,49 +78,42 @@ export const draggable = {
       document.documentElement.style.cursor = 'auto'
     },
     addListeners (e, ...args) {
-      if (!e.which) {
-        console.error('Given event must be mouse event:', e)
-      }
-
-      if (e.which !== 1) return
+      if (!e.which) throw Error(`Given event must be mouse event: ${e}`)
+      if (e.which !== 1) return // if not left click
       if (this.disabled) return
 
       this.prevent(e)
       this.showCursor()
-      // noinspection JSUnusedGlobalSymbols
       this.moving = true
-      this.initial = this.previous = {x: e.clientX, y: e.clientY}
-      this.mousemoveListner = event => this.mousemove(event, ...args)
+      this.previous = {x: e.clientX, y: e.clientY}
+      this.mousemoveListner = event => this._move(event, ...args)
       window.addEventListener('mousemove', this.mousemoveListner)
       window.addEventListener('mouseup', this.removeListeners)
     },
     removeListeners (e) {
       if (this.disabled) return
+
       this.prevent(e)
       this.resetCursor()
-      this.initial = null
-      // noinspection JSUnusedGlobalSymbols
-      this.moving = false
+      this.previous = null
+      this.moving = null
       window.removeEventListener('mousemove', this.mousemoveListner)
-      this.mousemoveListner = null
       window.removeEventListener('mouseup', this.removeListeners)
-      this.reset()
+      this.mousemoveListner = null
+      this.afterHover()
     },
-    mousemove (e, ...args) {
+    _move (e, ...args) {
       if (this.disabled) return
 
       this.prevent(e)
-      const totalY = e.clientY - this.initial.y
-      const totalX = e.clientX - this.initial.x
-
       const changeY = e.clientY - this.previous.y
       const changeX = e.clientX - this.previous.x
 
       this.previous = {x: e.clientX, y: e.clientY}
-      this.move(e, {totalX, totalY, changeY, changeX}, ...args)
+      this.move(e, {changeY, changeX}, ...args)
     },
     move () {
-      console.warn('`move(e)` not defined')
+      console.warn('`move` is not defined')
     },
     squash (v, low, high) {
       return Math.max(low, Math.min(high, v))
@@ -132,30 +124,33 @@ export const draggable = {
     prevent (e) {
       if (e && e.preventDefault) e.preventDefault()
     },
-    reset () {}
+    onHover () {
+      if (this.moving) return
+      this.in = true
+      this.showCursor()
+    },
+    afterHover () {
+      if (this.moving) return
+      this.in = false
+      this.resetCursor()
+    }
   },
   mounted () {
-    this.el = this.$refs[this.dragRef]
+    const el = this.$refs[this.dragRef]
+    if (!el) return
 
-    if (!this.el) {
-      return
-    }
-
-    this.el.addEventListener('mousedown', this.addListeners)
-    this.el.addEventListener('mouseup', this.removeListeners)
-    this.el.addEventListener('mouseenter', () => {
-      this.el.style.cursor = this.cursor
-    })
-    this.el.addEventListener('mouseleave', () => {
-      this.el.style.cursor = 'default'
-    })
+    el.addEventListener('mousedown', this.addListeners)
+    el.addEventListener('mouseup', this.removeListeners)
+    el.addEventListener('mouseenter', this.onHover)
+    el.addEventListener('mouseleave', this.afterHover)
   },
   destroyed () {
-    if (!this.el) {
-      return
-    }
+    const el = this.$refs[this.dragRef]
+    if (!el) return
 
-    this.el.removeEventListener('mousedown', this.mousedown)
-    this.el.removeEventListener('mouseup', this.mouseup)
+    el.removeEventListener('mousedown', this.addListeners)
+    el.removeEventListener('mouseup', this.removeListeners)
+    el.removeEventListener('mouseenter', this.onHover)
+    el.removeEventListener('mouseleave', this.afterHover)
   }
 }
