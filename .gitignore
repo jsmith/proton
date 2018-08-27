@@ -7,6 +7,9 @@ coverage
 node_modules/
 npm-debug.log
 npm-debug.log.*
+proton.iml
+proton.ipr
+proton.iws
 thumbs.db
 !.gitkeep
 
