@@ -25,7 +25,7 @@
     "test": "npm run unit && npm run e2e",
     "unit": "karma start test/unit/karma.conf.js",
     "storybook": "start-storybook -p 9001 -c .storybook",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook docs"
   },
   "dependencies": {
     "axios": "^0.16.1",

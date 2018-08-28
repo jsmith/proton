@@ -13,7 +13,7 @@
     props: ['value'],
     mixins: [draggable],
     methods: {
-      move (e, {changeY}) {
+      move (e, { changeY }) {
         this.$emit('input', this.value - changeY)
       }
     }

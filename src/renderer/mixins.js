@@ -110,7 +110,7 @@ export const draggable = {
       const changeX = e.clientX - this.previous.x
 
       this.previous = {x: e.clientX, y: e.clientY}
-      this.move(e, {changeY, changeX}, ...args)
+      this.move(e, ...args, {changeY, changeX})
     },
     move () {
       console.warn('`move` is not defined')
@@ -152,5 +152,16 @@ export const draggable = {
     el.removeEventListener('mouseup', this.removeListeners)
     el.removeEventListener('mouseenter', this.onHover)
     el.removeEventListener('mouseleave', this.afterHover)
+  }
+}
+
+export const konva = {
+  methods: {
+    emit (_, { evt }) {
+      this.$emit(evt.type, evt)
+    },
+    process (handler) {
+      return (_, { evt }) => handler(evt)
+    }
   }
 }

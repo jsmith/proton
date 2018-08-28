@@ -1,35 +1,37 @@
 <template>
-  <v-stage :config="{height: 200, width: total * width}">
+  <v-stage :config="canvasConfig">
     <v-layer>
       <div v-for="(note, row) in notes" :key="note.value">
-        <template v-for="col in total">
-          <v-rect :key="col" :config="divStyle(row, col - 1, note.color)" @click="handleClick(row, col - 1)"></v-rect>
+        <template v-for="col in totalSixteenths">
+          <v-rect :key="col" :config="rectConfig(row, col - 1, note.color)" @click="add(row, col - 1)"></v-rect>
         </template>
       </div>
     </v-layer>
     <v-layer>
-      <template v-for="col in total">
-        <v-line :config="border(col)"></v-line>
+      <template v-for="col in totalSixteenths">
+        <v-line :config="borderConfig(col)"></v-line>
       </template>
     </v-layer>
     <v-layer>
-      <note
-          v-for="(note, i) in value"
-          :key="i" :height="height"
-          :width="width"
-          :x="note.x"
-          :y="note.y"
-          @contextmenu="remove(i)"
-          @mousedown="addListeners($event, note)"
-          @input="changeDefault"
-          v-model="note.length"></note>
+      <template v-for="(note, i) in value">
+        <note
+            :key="i"
+            :height="noteHeight"
+            :width="noteWidth"
+            :x="note.x"
+            :y="note.y"
+            @contextmenu="(e) => remove(e, i)"
+            @mousedown="addListeners($event, note)"
+            @input="changeDefault"
+            v-model="note.length"></note>
+      </template>
     </v-layer>
   </v-stage>
 </template>
 
 <script>
   import { draggable, px } from '@/mixins'
-  import { notes, range, BLACK, WHITE } from '@/_'
+  import { notes, range, BLACK, WHITE, replace, DefaultDict } from '@/_'
   import Note from '@/components/Note'
 
   export default {
@@ -37,84 +39,102 @@
     components: {Note},
     mixins: [px, draggable],
     props: {
-      height: {type: Number, required: true},
-      width: {type: Number, required: true},
-      value: Array
+      noteHeight: {type: Number, required: true},
+      noteWidth: {type: Number, required: true},
+      width: Number,
+      height: Number,
+      value: Array,
+      blackColor: {type: String, default: '#21252b'},
+      whiteColor: {type: String, default: '#282c34'},
+      defaultLength: {type: Number, default: 1},
+      measures: {type: Number, default: 1}
     },
     data () {
       return {
         lineColor: '#000',
-        notes: notes.map(n => ({...n, value: n.value + '4'})).reverse(),
         quarters: 4,
-        bars: 2,
         sixteenths: 4,
-        lookup: {},
+        lookup: new DefaultDict(new DefaultDict(Array)),
         cursor: 'move',
-        default: 1
+        default: null
       }
     },
     computed: {
-      styles () {
+      canvasConfig () {
         return {
-          [BLACK]: '#21252b',
-          [WHITE]: '#282c34'
+          height: this.height || this.notes.length * this.noteHeight,
+          width: this.width || this.totalSixteenths * this.noteWidth
         }
       },
-      total () {
-        return this.bars * this.quarters * this.sixteenths
+      colorLookup () {
+        return {[BLACK]: this.blackColor, [WHITE]: this.whiteColor}
+      },
+      totalSixteenths () {
+        return (this.measures + 1) * this.quarters * this.sixteenths // we always render 1 extra measure
+      },
+      notes () {
+        const n = []
+        const octaves = [4, 5]
+        octaves.map(octave => {
+          notes.map(note => n.push({...note, value: note.value + octave}))
+        })
+        return n.reverse()
       }
     },
     methods: {
       range,
-      handleClick (row, col) {
+      add (row, col) {
         const noteBar = {length: this.default, row, col, index: this.value.length, ...this.compute(row, col)}
-        this.lookup[row] = this.lookup[row] || {}
         this.lookup[row][col] = noteBar
         this.$emit('input', [...this.value, noteBar])
         this.$emit('added', noteBar)
+
+        let measureValue = col / (this.quarters * this.sixteenths)
+        if (measureValue === this.measures) measureValue++
+        if (measureValue > this.measures) this.$emit('update:measures', Math.ceil(measureValue))
       },
-      divStyle (row, col, color) {
+      rectConfig (row, col, color) {
         return {
-          height: this.height,
-          width: this.width,
-          fill: this.styles[color],
-          x: col * this.width,
-          y: row * this.height
+          height: this.noteHeight,
+          width: this.noteWidth,
+          fill: this.colorLookup[color],
+          x: col * this.noteWidth,
+          y: row * this.noteHeight
         }
       },
-      border (col) {
+      borderConfig (col) {
         let strokeWidth
         if (col % (this.quarters * this.sixteenths) === 0) strokeWidth = 2.4
         else if (col % this.sixteenths === 0) strokeWidth = 1.5
         else strokeWidth = 0.4
 
-        const start = [col * this.width, 0]
-        const end = [col * this.width, (this.notes.length) * this.height]
+        const start = [col * this.noteWidth, 0]
+        const end = [col * this.noteWidth, (this.notes.length) * this.noteHeight]
         return {
           points: [...start, ...end],
           strokeWidth,
           stroke: '#000'
         }
       },
-      move (e, _, note) {
-        const row = Math.floor(e.clientY / this.height)
-        const col = Math.floor(e.clientX / this.width)
+      move (e, note) {
+        const row = Math.floor(e.clientY / this.noteHeight)
+        const col = Math.floor(e.clientX / this.noteWidth)
 
         const oldNote = this.lookup[note.row][note.col]
         const newNote = {...oldNote, row, col, ...this.compute(row, col)}
 
-        this.lookup[row] = this.lookup[row] || {}
         this.lookup[row][col] = newNote
 
-        this.$emit('input', [...this.value.slice(0, oldNote.index), newNote, ...this.value.slice(oldNote.index + 1, this.value.length)])
+        this.$emit('input', replace(this.value, oldNote.index, newNote))
         this.$emit('added', newNote)
       },
-      remove (i) {
+      remove (e, i) {
+        e.preventDefault()
+
         const toRemove = this.value[i]
-        const value = [
-          ...this.value.slice(0, i),
-          ...this.value.slice(i + 1, this.value.length).map(note => ({...note, index: note.index - 1}))
-        ]
+        const value = replace(this.value, i)
+        value.slice(0, i).map(note => { note.index = note.index - 1 })
+
         this.$emit('input', value)
         this.$emit('removed', toRemove)
       },
@@ -126,8 +146,11 @@
         const sixteenths = rem % this.sixteenths; rem = Math.floor(rem / this.sixteenths)
         const quarters = rem % this.quarters; const bars = Math.floor(rem / this.quarters)
         const time = `${bars}:${quarters}:${sixteenths}`
-        return {x: col * this.width, y: row * this.height, time: time, note: this.notes[row].value}
+        return {x: col * this.noteWidth, y: row * this.noteHeight, time: time, note: this.notes[row].value}
       }
+    },
+    mounted () {
+      this.default = this.defaultLength
     }
   }
 </script>
@@ -142,7 +165,4 @@
 
   .measure, .section
     display: flex
-
-  table
-    border-collapse: collapse
 </style>

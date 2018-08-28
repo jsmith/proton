@@ -36,4 +36,24 @@ export const TREE = {
   }
 }
 
-export const parseTime = time => time.split(':')
+export const replace = (array, i, item) => {
+  if (item) {
+    return [...array.slice(0, i), item, ...array.slice(i + 1, array.length)]
+  } else {
+    return [...array.slice(0, i), ...array.slice(i + 1, array.length)]
+  }
+}
+
+export class DefaultDict {
+  constructor (O) {
+    return new Proxy({}, {
+      get: (target, name) => {
+        if (name in target) {
+          return target[name]
+        } else {
+          return (target[name] = typeof O === 'function' ? new O().valueOf() : O)
+        }
+      }
+    })
+  }
+}

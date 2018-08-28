@@ -1,62 +1,64 @@
 <template>
   <div class="note__root">
-    <v-rect :config="config" ref="note" @mousedown="mousedown" @contextmenu="rightClick"></v-rect>
-    <v-text :config="text"></v-text>
-    <v-rect :config="border" @mouseenter="onHover" @mouseleave="afterHover" @mousedown="(_, { evt }) => addListeners(evt)"></v-rect>
+    <v-rect :config="noteConfig" ref="note" @mousedown="emit" @contextmenu="emit"/>
+    <v-text :config="textConfig"/>
+    <v-rect :config="borderConfig" @mouseenter="onHover" @mouseleave="afterHover" @mousedown="(_, { evt }) => addListeners(evt)"/>
   </div>
 </template>
 
 <script>
-  import { draggable } from '@/mixins'
+  import { draggable, konva } from '@/mixins'
 
   export default {
     name: 'Note',
     props: {
       height: {type: Number, required: true},
       width: {type: Number, required: true},
+      borderWidth: {type: Number, default: 8},
+      fontSize: {type: Number, default: 12},
       x: {type: Number, default: 0},
       y: {type: Number, default: 0},
+      noteRadius: {type: Number, default: 4},
       value: Number,
-      note: String,
-      color: {default: '#0f82e6'}
+      text: String,
+      color: {type: String, default: '#0f82e6'},
+      borderColor: {type: String, default: '#7ebef7'},
+      textColor: {type: String, default: '#fff'}
     },
-    mixins: [draggable],
+    mixins: [draggable, konva],
     data () {
       return {
-        borderWidth: 8,
         cursor: 'ew-resize',
-        radius: 4,
-        fontSize: 12,
         takeAway: 1 // we take away an extra pixel because it looks better
       }
     },
     computed: {
-      config () {
+      noteConfig () {
         return {
           width: this.width * this.value - this.takeAway,
           height: this.height,
           fill: this.color,
-          cornerRadius: this.radius,
+          cornerRadius: this.noteRadius,
           x: this.x,
           y: this.y
         }
       },
-      border () {
+      borderConfig () {
         return {
           width: this.borderWidth,
           height: this.height,
-          fill: this.in ? '#7ebef7' : this.color,
+          fill: this.in ? this.borderColor : this.color,
           x: this.x + this.width * this.value - this.borderWidth - this.takeAway,
           y: this.y,
-          cornerRadius: this.radius
+          cornerRadius: this.noteRadius
         }
       },
-      text () {
+      textConfig () {
         return {
-          text: this.note,
+          text: this.text,
           x: this.x + 3,
           y: this.y + this.height / 2 - this.fontSize / 2 + 1, // the extra 1 makes it look better
-          fill: '#fff'
+          fill: this.textColor
         }
       }
     },
@@ -69,18 +71,6 @@
         if (this.value === length) return
         if (length < 1) return
         this.$emit('input', length)
-      },
-      rightClick (_, { evt }) {
-        evt.preventDefault()
-        this.$emit('contextmenu', evt)
-      },
-      mousedown (e, { evt }) {
-        this.$emit('mousedown', evt)
-      }
-    },
-    mounted () {
-      if (this.value === undefined) {
-        console.warn('saldfj')
       }
     }
   }

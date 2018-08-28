@@ -16,7 +16,7 @@
       w: {type: Number, default: 250},
       widthProportion: {type: Number, default: 0.55},
       heightProportion: {type: Number, default: 0.50},
-      border: {type: Boolean, default: false}
+      borderConfig: {type: Boolean, default: false}
     },
     computed: {
       color () {
@@ -33,7 +33,7 @@
           }
         } else {
           return {
-            borderBottom: this.border ? 'solid 1px #b9b9b9' : '',
+            borderBottom: this.borderConfig ? 'solid 1px #b9b9b9' : '',
             ...this.hw(this.h, this.w)
           }
         }

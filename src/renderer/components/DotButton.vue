@@ -13,7 +13,7 @@
       }
     },
     methods: {
-      handleClick () {
+      add () {
         this.active = !this.active
         this.$emit('click')
       }
