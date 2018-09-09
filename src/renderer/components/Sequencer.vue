@@ -47,7 +47,7 @@
       blackColor: {type: String, default: '#21252b'},
       whiteColor: {type: String, default: '#282c34'},
       defaultLength: {type: Number, default: 1},
-      measures: {type: Number, default: 1}
+      measures: {type: Number, required: true}
     },
     data () {
       return {
@@ -56,7 +56,9 @@
         sixteenths: 4,
         lookup: new DefaultDict(new DefaultDict(Array)),
         cursor: 'move',
-        default: null
+        default: null,
+        octaves: [4, 5],
+        farthest: []
       }
     },
     computed: {
@@ -74,8 +76,7 @@
       },
       notes () {
         const n = []
-        const octaves = [4, 5]
-        octaves.map(octave => {
+        this.octaves.map(octave => {
           notes.map(note => n.push({...note, value: note.value + octave}))
         })
         return n.reverse()
@@ -88,10 +89,7 @@
         this.lookup[row][col] = noteBar
         this.$emit('input', [...this.value, noteBar])
         this.$emit('added', noteBar)
-
-        let measureValue = col / (this.quarters * this.sixteenths)
-        if (measureValue === this.measures) measureValue++
-        if (measureValue > this.measures) this.$emit('update:measures', Math.ceil(measureValue))
+        this.checkMeasure(col)
       },
       rectConfig (row, col, color) {
         return {
@@ -135,6 +133,11 @@
         const value = replace(this.value, i)
         value.slice(0, i).map(note => { note.index = note.index - 1 })
 
+        // TODO XXX !!!
+        if (this.farthest.length || toRemove.col === this.farthest[this.farthest.length - 1]) {
+          this.farthest.splice()
+        }
+
         this.$emit('input', value)
         this.$emit('removed', toRemove)
       },
@@ -147,10 +150,24 @@
         const quarters = rem % this.quarters; const bars = Math.floor(rem / this.quarters)
         const time = `${bars}:${quarters}:${sixteenths}`
         return {x: col * this.noteWidth, y: row * this.noteHeight, time: time, note: this.notes[row].value}
+      },
+      checkMeasure (col) {
+        let measureValue = col / (this.quarters * this.sixteenths)
+        if (measureValue === this.measures) this.$emit('update:measures', measureValue + 1)
+        else {
+          measureValue = Math.ceil(measureValue)
+          if (measureValue > this.measures) this.$emit('update:measures', measureValue)
+          else if (measureValue < this.measures) this.$emit('update:measures', measureValue)
+        }
       }
     },
     mounted () {
       this.default = this.defaultLength
+      this.value.map((note) => {
+        console.log(note)
+        this.$emit('added', note)
+        this.checkMeasure(note.col)
+      })
     }
   }
 </script>

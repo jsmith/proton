@@ -74,7 +74,7 @@ const setMainMenu = () => {
       submenu: [
         {
           label: 'Learn More',
-          click () { shell.openExternal('https://github.com/jacsmith21/proton') }
+          click () { shell.openExternal('https://github.com/jsmith/proton') }
         }
       ]
     }

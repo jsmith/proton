@@ -5,12 +5,8 @@
       <v-icon>slice</v-icon>
     </template>
     <div style="display: flex">
-      <div>
-        <piano v-for="octave in octaves" :key="octave" :octave="octave"></piano>
-      </div>
-      <div>
-        <sequencer v-for="octave in octaves" :key="octave" :size="25"></sequencer>
-      </div>
+      <piano :key="octave" :octave="octave"></piano>
+      <sequencer :key="octave" :size="25"></sequencer>
     </div>
   </window>
 </template>

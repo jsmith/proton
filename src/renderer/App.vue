@@ -1,25 +1,13 @@
 <template>
-  <div id="app">
-    <v-app dark>
-
-      <drawer></drawer>
-
-      <toolbar></toolbar>
-
-      <v-content>
-        <v-container fluid fill-height>
-          <v-slide-y-transition mode="out-in">
-            <router-view></router-view>
-          </v-slide-y-transition>
-        </v-container>
-      </v-content>
-
-      <v-footer app>
-        <span style="width: 100%; text-align: center">&copy; Jacob Smith 2018</span>
-      </v-footer>
-
-    </v-app>
-  </div>
+  <v-app dark id="#app">
+    <drawer></drawer>
+    <toolbar></toolbar>
+    <v-content>
+      <v-container fluid fill-height>
+        <router-view></router-view>
+      </v-container>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
@@ -41,5 +29,4 @@
 
 <style>
   @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons');
-  /* Global CSS */
 </style>
