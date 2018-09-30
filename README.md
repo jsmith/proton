@@ -1,6 +1,7 @@
-# Proton
+> Development is now occuring [here](https://github.com/vuesic/vuesic). 
 
-> A modern DAW built with Electron and Vue!
+# Proton
+A modern DAW built with Electron and Vue!
 
 ## Development
 
