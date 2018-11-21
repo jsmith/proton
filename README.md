@@ -1,4 +1,4 @@
-> Development is now occuring [here](https://github.com/vuesic/vuesic). 
+> Development is now occuring [here](https://github.com/dawg/vusic). 
 
 # Proton
 A modern DAW built with Electron and Vue!
